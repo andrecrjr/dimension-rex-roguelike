@@ -2,6 +2,6 @@ function _draw()
     cls(3)
     map()
     plr:draw()
-    print(plr.health, 0, 0)
+    print(plr.health, 0, 0, 5)
     enmies:draw()
 end

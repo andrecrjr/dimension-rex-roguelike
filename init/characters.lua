@@ -27,7 +27,7 @@ function init_plr()
             self.y = self.y + self.spd
             self.spr=1
         end
-        self:clear_damage()
+        self:clr_damage()
     end
     
     plr['draw'] = function(self)
@@ -39,12 +39,13 @@ function init_plr()
     
     plr['damaged']= function (self, damage)
         if damage > 0 then
+            print("damage "..damage)
             self.health = self.health - damage
             self.damage=damage
         end
     end
     
-    plr['clear_damage'] = function(self)
+    plr['clr_damage'] = function(self)
         if self.damage>0 and time() % 2 == 0 then
             self.damage = 0
         end
@@ -58,7 +59,9 @@ function init_enmy()
         speed = 0.6, -- velocidade de movimento
         sprite = 17, -- sprite do inimigo
         colision=false,
-        damage=flr(rnd(3))
+        damage=flr(rnd(2)+1),
+        dx=1,
+        dy=0
     }
     enmy['spawn_enmy']=function(self, table)
         add(table, self)
@@ -70,7 +73,10 @@ function init_enmies()
     enmies = {}
     enmies['draw']=function (self)
         for enemy in all(self) do
-            spr(enemy.sprite, enemy.x, enemy.y)
+            if enemy.x > 0 and enemy.x + 1 > enemy.x then
+            else
+            end
+            spr(17, enemy.x, enemy.y)
           end
     end
     enmies['follow']= function(self)
@@ -79,32 +85,25 @@ function init_enmies()
             local dx = plr.x - enemy.x
             local dy = plr.y - enemy.y
             dist = sqrt(dx * dx + dy * dy)
-          
-            -- verifica se o inimigo
-            -- esta perto o suficiente 
-            --do jogador para segui-lo
             tile = mget(flr(enemy.x / 8), flr(enemy.y / 8))
             plr_tile = mget(flr(plr.x / 8), flr(plr.y / 8))
             if dist < 35 then
               local angle = atan2(dx, dy)
-              new_x = enemy.x + cos(angle) * enemy.speed
-              new_y = enemy.y + sin(angle) * enemy.speed
-              local tile1 = mget(flr(new_x / 8), flr(new_y / 8))
-              local tile2 = mget(flr((new_x + 7) / 8), flr(new_y / 8)) -- obtem o tile no canto superior direito do inimigo
-              local tile3 = mget(flr(new_x / 8), flr((new_y + 7) / 8)) -- obtem o tile no canto inferior esquerdo do inimigo
-              local tile4 = mget(flr((new_x + 7) / 8), flr((new_y + 7) / 8)) -- obtem o tile no canto inferior direito do inimigo
+              enemy.dx = enemy.x + cos(angle) * enemy.speed
+              enemy.dy = enemy.y + sin(angle) * enemy.speed
+              local tile1 = mget(flr(enemy.dx / 8), flr(enemy.dy / 8))
+              local tile2 = mget(flr((enemy.dx + 7) / 8), flr(enemy.dy / 8))
+              local tile3 = mget(flr(enemy.dx / 8), flr((enemy.dy + 7) / 8))
+              local tile4 = mget(flr((enemy.dx + 7) / 8), flr((enemy.dy + 7) / 8))
               if tile1 ~= 6 and tile2~=6
                and tile3~=6 and tile4~=6 then -- se o tile nれこo for uma parede ou uma arvore
-                -- atualiza a posicao do inimigo
-                enemy.x = new_x
-                enemy.y = new_y
+                enemy.x = enemy.dx 
+                enemy.y = enemy.dy
               end
               if dist <= 10 then
-                  enemy.colision = true
-                  if time() % 1 == 0 then
+                enemy.colision = true
+                if time() % 1 == 0 then
                       plr:damaged(enmy.damage)
-                      --local enmy = init_enmy()
-                      --enmy:spawn_enmy(enmies)
                   end
               else
                   enemy.colision = false
