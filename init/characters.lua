@@ -38,13 +38,12 @@ function init_plr()
     plr['draw'] = function(self)
         spr(self.spr, self.x, self.y, 1,1, self.flp)
         if self.damage > 0 then
-            print(-self.damage, self.x,self.y - 8,8)
+            print(-self.damage, self.x, self.y - 8,8)
         end
     end
     
     plr['damaged']= function (self, damage)
         if damage > 0 then
-            print("damage "..damage)
             self.health = self.health - damage
             self.damage=damage
         end
@@ -118,7 +117,7 @@ function init_enmies()
               if dist <= 10 then
                 enemy.colision = true
                 if time() % 1 == 0 then
-                      plr:damaged(enmy.damage)
+                      plr:damaged(enemy.damage)
                       local newenmyn = init_enmy()
                       newenmyn:spawn_enmy(enmies)
                 end
