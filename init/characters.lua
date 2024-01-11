@@ -7,25 +7,30 @@ function init_plr()
         h= 100,
         flp=false,
         health=100,
-        damage=0
+        damage=0,
+        plr_dir="left"
     }
     
     plr['updt'] = function(self)
-        if btn(0) then
+        if btn(⬅️) then
             self.x = self.x - self.spd
             self.spr = 4
             self.flp=true
-        elseif btn(1) then
+            plr_dir="left"
+        elseif btn(➡️) then
             self.x = self.x + self.spd
             self.spr = 4
             self.flp=false
+            plr_dir="right"
         end
-        if btn(2) then
+        if btn(⬆️) then
             self.y = self.y - self.spd
             self.spr=7
-        elseif btn(3) then
+            plr_dir="up"
+        elseif btn(⬇️) then
             self.y = self.y + self.spd
             self.spr=1
+            plr_dir="down"
         end
         self:clr_damage()
     end
@@ -54,14 +59,17 @@ end
 
 function init_enmy()
     local enmy={
-        x = rnd(120), 
-        y = rnd(120), 
+        x = rnd(mid(plr.x+50, 100,120)), 
+        y = rnd(mid(plr.y+40, 100,120)), 
         speed = 0.6, -- velocidade de movimento
-        sprite = 17, -- sprite do inimigo
+        spr = 16, -- sprite do inimigo
         colision=false,
-        damage=flr(rnd(2)+1),
+        damage=flr(rnd(8)+1),
         dx=1,
-        dy=0
+        dy=0,
+        min_dist=mid(25,35,55),
+        reach=false,
+        flp=false
     }
     enmy['spawn_enmy']=function(self, table)
         add(table, self)
@@ -73,10 +81,15 @@ function init_enmies()
     enmies = {}
     enmies['draw']=function (self)
         for enemy in all(self) do
-            if enemy.x > 0 and enemy.x + 1 > enemy.x then
+            if enemy['reach'] then
+                if plr_dir == 'up' then enemy.spr=19 enemy.flp=false
+                elseif plr_dir == 'down' then enemy.spr=16 enemy.flp=false end
+                if plr_dir == 'left' then enemy.spr=20 enemy.flp=false
+                elseif plr_dir == 'right' then enemy.spr=20 enemy.flp=true end
+                spr(enemy.spr, enemy.x, enemy.y, 1,1, enemy.flp)
             else
+                spr(enemy.spr, enemy.x, enemy.y)
             end
-            spr(17, enemy.x, enemy.y)
           end
     end
     enmies['follow']= function(self)
@@ -87,7 +100,9 @@ function init_enmies()
             dist = sqrt(dx * dx + dy * dy)
             tile = mget(flr(enemy.x / 8), flr(enemy.y / 8))
             plr_tile = mget(flr(plr.x / 8), flr(plr.y / 8))
-            if dist < 35 then
+            enemy.reach=false
+            if dist < enemy.min_dist then
+              enemy.reach=true
               local angle = atan2(dx, dy)
               enemy.dx = enemy.x + cos(angle) * enemy.speed
               enemy.dy = enemy.y + sin(angle) * enemy.speed
@@ -104,7 +119,9 @@ function init_enmies()
                 enemy.colision = true
                 if time() % 1 == 0 then
                       plr:damaged(enmy.damage)
-                  end
+                      local newenmyn = init_enmy()
+                      newenmyn:spawn_enmy(enmies)
+                end
               else
                   enemy.colision = false
               end
