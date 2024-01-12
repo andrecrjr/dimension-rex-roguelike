@@ -33,6 +33,9 @@ function init_plr()
             plr_dir="down"
         end
         self:clr_damage()
+        self.dx=self.x
+        self.dy=self.y
+        collision(self)
     end
     
     plr['draw'] = function(self)
@@ -57,6 +60,7 @@ function init_plr()
 end
 
 function init_enmy()
+
     local enmy={
         x = rnd(mid(plr.x+50, 100,120)), 
         y = rnd(mid(plr.y+40, 100,120)), 
@@ -102,24 +106,15 @@ function init_enmies()
             enemy.reach=false
             if dist < enemy.min_dist then
               enemy.reach=true
-              local angle = atan2(dx, dy)
-              enemy.dx = enemy.x + cos(angle) * enemy.speed
-              enemy.dy = enemy.y + sin(angle) * enemy.speed
-              local tile1 = mget(flr(enemy.dx / 8), flr(enemy.dy / 8))
-              local tile2 = mget(flr((enemy.dx + 7) / 8), flr(enemy.dy / 8))
-              local tile3 = mget(flr(enemy.dx / 8), flr((enemy.dy + 7) / 8))
-              local tile4 = mget(flr((enemy.dx + 7) / 8), flr((enemy.dy + 7) / 8))
-              if tile1 ~= 6 and tile2~=6
-               and tile3~=6 and tile4~=6 then -- se o tile nれこo for uma parede ou uma arvore
-                enemy.x = enemy.dx 
-                enemy.y = enemy.dy
-              end
+            local angle = atan2(dx, dy)
+            enemy.dx = enemy.x + cos(angle) * enemy.speed
+            enemy.dy = enemy.y + sin(angle) * enemy.speed
+            print("!", enemy.dx-8, enemy.dy + 15)
+            collision(enemy)
               if dist <= 10 then
                 enemy.colision = true
                 if time() % 1 == 0 then
                       plr:damaged(enemy.damage)
-                      local newenmyn = init_enmy()
-                      newenmyn:spawn_enmy(enmies)
                 end
               else
                   enemy.colision = false

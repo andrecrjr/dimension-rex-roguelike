@@ -5,5 +5,5 @@ function _draw()
     print(plr.health, 0, 0, 5)
     enmies:draw()
     phase:gen_map()
-
+    phase:drop_items()
 end
