@@ -4,4 +4,6 @@ function _draw()
     plr:draw()
     print(plr.health, 0, 0, 5)
     enmies:draw()
+    phase:gen_map()
+
 end
