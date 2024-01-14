@@ -67,13 +67,18 @@ function init_phase()
   end
 
   phase['drop_items'] = function(self) 
+    local gun = {prob=0.5, sp=240, spwn=false}
     if self.generated and not self.gen_itens then
       for x = 0, 127 do
         for y = 0, 31 do
           local r = rnd(1)
           local tile = mget(x, y)
-          if tile != 194 and r < 0.055 then
+          if tile != 194 and r<gun.prob and not gun.spwn then
             mset(x, y, 240)
+            gun.spwn=true
+          end
+          if tile != 194 and r < 0.055 then
+            --mset(x, y, 240)
           end
         end
       end

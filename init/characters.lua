@@ -8,34 +8,62 @@ function init_plr()
         flp=false,
         health=100,
         damage=0,
-        plr_dir="left"
+        plr_dir="left",
+        w=8,
+        h=8
     }
+
+    plr.chck_tile = function (plr)
+         tile1 = mget(flr(plr.x / 8), flr(plr.y / 8))
+         tile2 = mget(flr((plr.x + 8-1) / 8), flr(plr.y / 8))
+         tile3 = mget(flr(plr.x / 8), flr((plr.y + 7) / 8))
+         tile4 = mget(flr((plr.x + 8 - 1) / 8), flr((plr.y + 7) / 8))
+        return tile1, tile2, tile3, tile4
+    end
+
+    plr.move_plr=function (plr, dx, dy)
+            -- Calcula a nova posição
+            local new_x = plr.x + dx
+            local new_y = plr.y + dy
+            local tile_size = 8
+            if not (is_solid(flr(new_x / tile_size), flr(new_y / tile_size)) or
+                    is_solid(flr((new_x + plr.w - 1) / tile_size), flr(new_y / tile_size)) or
+                    is_solid(flr(new_x / tile_size), flr((new_y + plr.h - 1) / tile_size)) or
+                    is_solid(flr((new_x + plr.w - 1) / tile_size), flr((new_y + plr.h - 1) / tile_size))) then
+              -- Se não houver colisão, atualiza a posição do jogador
+              plr.x = new_x
+              plr.y = new_y
+            end
+    end
     
-    plr['updt'] = function(self)
+    plr.updt = function(self)
         if btn(⬅️) then
             self.x = self.x - self.spd
             self.spr = 4
             self.flp=true
             plr_dir="left"
+            self:move_plr(-1, 0)
         elseif btn(➡️) then
             self.x = self.x + self.spd
             self.spr = 4
             self.flp=false
             plr_dir="right"
+            self:move_plr(1, 0)
         end
         if btn(⬆️) then
             self.y = self.y - self.spd
             self.spr=7
             plr_dir="up"
+            self:move_plr(0, -1)
         elseif btn(⬇️) then
             self.y = self.y + self.spd
             self.spr=1
             plr_dir="down"
+            self:move_plr(0, 1)
         end
         self:clr_damage()
         self.dx=self.x
         self.dy=self.y
-        collision(self)
     end
     
     plr['draw'] = function(self)
@@ -74,7 +102,14 @@ function init_enmy()
         reach=false,
         flp=false
     }
-    enmy['spawn_enmy']=function(self, table)
+    enmy.chck_tile = function (plr)
+        tile1 = mget(flr(plr.x / 8), flr(plr.y / 8))
+        tile2 = mget(flr((plr.x + 8-1) / 8), flr(plr.y / 8))
+        tile3 = mget(flr(plr.x / 8), flr((plr.y + 7) / 8))
+        tile4 = mget(flr((plr.x + 8 - 1) / 8), flr((plr.y + 7) / 8))
+       return tile1, tile2, tile3, tile4
+   end
+    enmy.spwn_enmy=function(self, table)
         add(table, self)
     end
     return enmy
@@ -82,9 +117,9 @@ end
 
 function init_enmies()
     enmies = {}
-    enmies['draw']=function (self)
+    enmies.draw=function (self)
         for enemy in all(self) do
-            if enemy['reach'] then
+            if enemy.reach then
                 if plr_dir == 'up' then enemy.spr=19 enemy.flp=false
                 elseif plr_dir == 'down' then enemy.spr=16 enemy.flp=false end
                 if plr_dir == 'left' then enemy.spr=20 enemy.flp=false
@@ -95,14 +130,12 @@ function init_enmies()
             end
           end
     end
-    enmies['follow']= function(self)
+    enmies.follow= function(self)
         for enemy in all(self) do
             -- calcula a distancia entre o inimigo e o jogador
             local dx = plr.x - enemy.x
             local dy = plr.y - enemy.y
             dist = sqrt(dx * dx + dy * dy)
-            tile = mget(flr(enemy.x / 8), flr(enemy.y / 8))
-            plr_tile = mget(flr(plr.x / 8), flr(plr.y / 8))
             enemy.reach=false
             if dist < enemy.min_dist then
               enemy.reach=true

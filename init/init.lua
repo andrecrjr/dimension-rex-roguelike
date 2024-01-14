@@ -4,6 +4,6 @@ function _init()
     init_enmies()
     for i = 1, 10 do
         enmy = init_enmy()
-        enmy:spawn_enmy(enmies)
+        enmy:spwn_enmy(enmies)
     end
 end

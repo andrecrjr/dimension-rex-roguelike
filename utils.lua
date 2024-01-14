@@ -6,13 +6,19 @@ function distance(obj1, obj2)
 end
 
 function collision(obj)
-    local tile1 = mget(flr(obj.dx / 8), flr(obj.dy / 8))
-    local tile2 = mget(flr((obj.dx + 7) / 8), flr(obj.dy / 8))
-    local tile3 = mget(flr(obj.dx / 8), flr((obj.dy + 7) / 8))
-    local tile4 = mget(flr((obj.dx + 7) / 8), flr((obj.dy + 7) / 8))
-    if tile1 ~= 194 and tile2~=194
-     and tile3~=194 and tile4~=194 then -- se o tile nれこo for uma parede ou uma arvore
+    local tile1, tile2, tile3, tile4 = obj:chck_tile()
+    if tile1 ~= 194 and tile2~=194 
+    and tile3~=194 and tile4~=194 then
+        
         obj.x = obj.dx 
         obj.y = obj.dy
     end
 end
+
+function is_solid(x, y)
+    -- Substitua 'f' pelo número da flag que indica um tile sólido
+    printh(fget(mget(x, y), 1))
+
+    return fget(mget(x, y), 1)
+  end
+  
