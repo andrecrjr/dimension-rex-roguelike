@@ -9,16 +9,14 @@ function collision(obj)
     local tile1, tile2, tile3, tile4 = obj:chck_tile()
     if tile1 ~= 194 and tile2~=194 
     and tile3~=194 and tile4~=194 then
-        
         obj.x = obj.dx 
         obj.y = obj.dy
     end
 end
 
 function is_solid(x, y)
+    printh(fget(mget(x, y), 0))
     -- Substitua 'f' pelo número da flag que indica um tile sólido
-    printh(fget(mget(x, y), 1))
-
-    return fget(mget(x, y), 1)
+    return fget(mget(x, y), 0)
   end
   

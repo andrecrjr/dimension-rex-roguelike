@@ -13,26 +13,19 @@ function init_plr()
         h=8
     }
 
-    plr.chck_tile = function (plr)
-         tile1 = mget(flr(plr.x / 8), flr(plr.y / 8))
-         tile2 = mget(flr((plr.x + 8-1) / 8), flr(plr.y / 8))
-         tile3 = mget(flr(plr.x / 8), flr((plr.y + 7) / 8))
-         tile4 = mget(flr((plr.x + 8 - 1) / 8), flr((plr.y + 7) / 8))
-        return tile1, tile2, tile3, tile4
-    end
-
     plr.move_plr=function (plr, dx, dy)
             -- Calcula a nova posição
             local new_x = plr.x + dx
             local new_y = plr.y + dy
+            printh(plr.x)
             local tile_size = 8
-            if not (is_solid(flr(new_x / tile_size), flr(new_y / tile_size)) or
-                    is_solid(flr((new_x + plr.w - 1) / tile_size), flr(new_y / tile_size)) or
-                    is_solid(flr(new_x / tile_size), flr((new_y + plr.h - 1) / tile_size)) or
+            if (is_solid(flr(new_x / tile_size), flr(new_y / tile_size)) or is_solid(flr((new_x + plr.w - 1) / tile_size), flr(new_y / tile_size))) then
+                plr.x = plr.x + 1
+                plr.y = plr.y + 1
+            elseif (is_solid(flr(new_x / tile_size), flr((new_y + plr.h - 1) / tile_size)) or
                     is_solid(flr((new_x + plr.w - 1) / tile_size), flr((new_y + plr.h - 1) / tile_size))) then
-              -- Se não houver colisão, atualiza a posição do jogador
-              plr.x = new_x
-              plr.y = new_y
+                plr.x = plr.x - 1
+                plr.y = plr.y - 1
             end
     end
     
@@ -109,6 +102,9 @@ function init_enmy()
         tile4 = mget(flr((plr.x + 8 - 1) / 8), flr((plr.y + 7) / 8))
        return tile1, tile2, tile3, tile4
    end
+   enmy.collid = function(enmy)
+    collision(enmy)
+   end
     enmy.spwn_enmy=function(self, table)
         add(table, self)
     end
@@ -143,10 +139,10 @@ function init_enmies()
             enemy.dx = enemy.x + cos(angle) * enemy.speed
             enemy.dy = enemy.y + sin(angle) * enemy.speed
             print("!", enemy.dx-8, enemy.dy + 15)
-            collision(enemy)
+            enemy:collid()
               if dist <= 10 then
                 enemy.colision = true
-                if time() % 1 == 0 then
+                if time() % 0.50 == 0 then
                       plr:damaged(enemy.damage)
                 end
               else
