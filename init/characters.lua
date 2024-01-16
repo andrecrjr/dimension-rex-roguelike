@@ -94,11 +94,11 @@ function init_enmy()
         reach=false,
         flp=false
     }
-    enmy.chck_tile = function (plr)
-        tile1 = mget(flr(plr.x / 8), flr(plr.y / 8))
-        tile2 = mget(flr((plr.x + 8-1) / 8), flr(plr.y / 8))
-        tile3 = mget(flr(plr.x / 8), flr((plr.y + 7) / 8))
-        tile4 = mget(flr((plr.x + 8 - 1) / 8), flr((plr.y + 7) / 8))
+    enmy.chck_tile = function (enmy)
+        tile1 = mget(flr(enmy.dx / 8), flr(enmy.dy / 8))
+        tile2 = mget(flr((plr.dx + 8-1) / 8), flr(enmy.dy / 8))
+        tile3 = mget(flr(enmy.dx / 8), flr((enmy.dy + 7) / 8))
+        tile4 = mget(flr((enmy.dx + 8 - 1) / 8), flr((enmy.dy + 7) / 8))
        return tile1, tile2, tile3, tile4
    end
    enmy.collid = function(enmy)
@@ -138,7 +138,7 @@ function init_enmies()
             enemy.dx = enemy.x + cos(angle) * enemy.speed
             enemy.dy = enemy.y + sin(angle) * enemy.speed
             print("!", enemy.dx-8, enemy.dy + 15)
-            enemy:collid()
+            collision(enemy)
               if dist <= 10 then
                 enemy.colision = true
                 if time() % 0.50 == 0 then
