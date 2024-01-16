@@ -15,7 +15,6 @@ function collision(obj)
 end
 
 function is_solid(x, y)
-    printh(fget(mget(x, y), 0))
     -- Substitua 'f' pelo número da flag que indica um tile sólido
     return fget(mget(x, y), 0)
   end

@@ -17,7 +17,6 @@ function init_plr()
             -- Calcula a nova posição
             local new_x = plr.x + dx
             local new_y = plr.y + dy
-            printh(plr.x)
             local tile_size = 8
             if (is_solid(flr(new_x / tile_size), flr(new_y / tile_size)) or is_solid(flr((new_x + plr.w - 1) / tile_size), flr(new_y / tile_size))) then
                 plr.x = plr.x + 1
