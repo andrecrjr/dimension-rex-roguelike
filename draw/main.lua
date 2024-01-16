@@ -6,4 +6,5 @@ function _draw()
     enmies:draw()
     phase:gen_map()
     phase:drop_items()
+    menu_game()
 end

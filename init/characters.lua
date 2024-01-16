@@ -10,22 +10,26 @@ function init_plr()
         damage=0,
         plr_dir="left",
         w=8,
-        h=8
+        h=8,
+        level=1
     }
 
     plr.move_plr=function (plr, dx, dy)
             -- Calcula a nova posição
             local new_x = plr.x + dx
             local new_y = plr.y + dy
-            local tile_size = 8
-            if (is_solid(flr(new_x / tile_size), flr(new_y / tile_size)) or is_solid(flr((new_x + plr.w - 1) / tile_size), flr(new_y / tile_size))) then
+            local solid_t = 0
+            local liquid_t = 1
+            if char_colision("top", new_x, new_y, solid_t) then
                 plr.x = plr.x + 1
                 plr.y = plr.y + 1
-            elseif (is_solid(flr(new_x / tile_size), flr((new_y + plr.h - 1) / tile_size)) or
-                    is_solid(flr((new_x + plr.w - 1) / tile_size), flr((new_y + plr.h - 1) / tile_size))) then
+            elseif char_colision("bottom", new_x, new_y, solid_t) then
                 plr.x = plr.x - 1
                 plr.y = plr.y - 1
+            elseif char_colision("top", new_x, new_y, liquid_t) then
+                
             end
+
     end
     
     plr.updt = function(self)

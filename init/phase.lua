@@ -1,7 +1,10 @@
 function init_phase()
     
     phase = {
-        map={},
+        map={
+          w=120,
+          h=30
+        },
         generated=false,
         gen_itens=false,
         tiles={
@@ -16,18 +19,14 @@ function init_phase()
         sand = 0.01, -- 15% de chance de ser areia
         rock = 0.01 -- 15% de chance de ser rocha
       }
-    }
-
-  
+    }  
 
   phase['gen_map'] = function(self)
     -- define a seed
     if not self.generated then
-      local seed = 126
       -- inicializa o gerador de números pseudo-aleatórios com a seed
-      --srand(seed)
-      for x = 0, 127 do
-        for y = 0, 31 do
+      for x = 0, self.map.w do
+        for y = 0, self.map.h do
           -- sorteia um nれむmero aleatれはrio entre 0 e 1
           local r = rnd(1)
           -- escolhe o tipo de terreno de acordo com a probabilidade
@@ -68,17 +67,19 @@ function init_phase()
 
   phase['drop_items'] = function(self) 
     local gun = {prob=0.5, sp=240, spwn=false}
+    local tr = {prob=0.004, sp=241, spwn=false}
     if self.generated and not self.gen_itens then
-      for x = 0, 127 do
-        for y = 0, 31 do
+      for x = 0, self.map.w do
+        for y = 0, self.map.h do
           local r = rnd(1)
           local tile = mget(x, y)
-          if tile != 194 and r<gun.prob and not gun.spwn then
+          if tile != 194 and r < gun.prob and not gun.spwn then
             mset(x, y, 240)
             gun.spwn=true
           end
-          if tile != 194 and r < 0.055 then
-            --mset(x, y, 240)
+          if tile != 194 and r < tr.prob and not tr.spwn then
+            mset(x, y, tr.sp)
+            tr.spwn=true
           end
         end
       end
