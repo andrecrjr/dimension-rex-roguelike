@@ -21,12 +21,11 @@ function init_plr()
         local pty1 = flr(plr.y / 8)
         local ptx2 = flr((plr.x + 7) / 8)
         local pty2 = flr((plr.y + 7) / 8)
-    
         -- Verifica as flags em cada canto
-        return fget(mget(ptx1, pty1), flag) or
-               fget(mget(ptx2, pty1), flag) or
-               fget(mget(ptx1, pty2), flag) or
-               fget(mget(ptx2, pty2), flag)
+        return has_flag(ptx1, pty1, flag) or
+               has_flag(ptx2, pty1, flag) or
+               has_flag(ptx1, pty2, flag) or
+               has_flag(ptx2, pty2, flag)
     end
     
     plr.updt = function(self)
@@ -96,15 +95,22 @@ function init_enmy()
         reach=false,
         flp=false
     }
-    enmy.chck_tile = function (enmy)
-        tile1 = mget(flr(enmy.dx / 8), flr(enmy.dy / 8))
-        tile2 = mget(flr((plr.dx + 8-1) / 8), flr(enmy.dy / 8))
-        tile3 = mget(flr(enmy.dx / 8), flr((enmy.dy + 7) / 8))
-        tile4 = mget(flr((enmy.dx + 8 - 1) / 8), flr((enmy.dy + 7) / 8))
-       return tile1, tile2, tile3, tile4
-   end
-   enmy.collid = function(enmy)
-    collision(enmy)
+    enmy.collision = function (enmy)
+        local ptx1 = flr(enmy.dx / 8)
+        local pty1 = flr(enmy.dy / 8)
+        local ptx2 = flr((enmy.dx + 7) / 8)
+        local pty2 = flr((enmy.dy + 7) / 8)
+        
+        -- Verifica a flag nos quatro cantos do sprite do inimigo
+        local collision1 = fget(mget(ptx1, pty1), 0)
+        local collision2 = fget(mget(ptx2, pty1), 0)
+        local collision3 = fget(mget(ptx1, pty2), 0)
+        local collision4 = fget(mget(ptx2, pty2), 0)
+    
+        if not (collision1 or collision2 or collision3 or collision4) then
+            enmy.x = enmy.dx 
+            enmy.y = enmy.dy
+        end
    end
     enmy.spwn_enmy=function(self, table)
         add(table, self)
@@ -140,7 +146,7 @@ function init_enmies()
             enemy.dx = enemy.x + cos(angle) * enemy.speed
             enemy.dy = enemy.y + sin(angle) * enemy.speed
             print("!", enemy.dx-8, enemy.dy + 15)
-            collision(enemy)
+            enemy:collision()
             if dist <= 10 then
             enemy.colision = true
             if time() % 0.50 == 0 then
