@@ -19,17 +19,3 @@ function has_flag(x, y, f)
     return fget(mget(x, y), f)
   end
   
-function char_colision(side, new_x, new_y, flag)
-    local tile_size = 8
-    if side == "top" then
-    return has_flag(flr(new_x / tile_size), 
-        flr(new_y / tile_size), flag) or has_flag(
-            flr((new_x + plr.w - 1) / tile_size), 
-        flr(new_y / tile_size), flag)
-    else
-        return has_flag(flr(new_x / tile_size), 
-        flr((new_y + plr.h - 1) / tile_size), solid_t) or
-                has_flag(flr((new_x + plr.w - 1) / tile_size), 
-                flr((new_y + plr.h - 1) / tile_size), flag)
-    end
-end

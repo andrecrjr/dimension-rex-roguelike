@@ -11,55 +11,53 @@ function init_plr()
         plr_dir="left",
         w=8,
         h=8,
+        dx=0,
+        dy=1,
         level=1
     }
 
-    plr.move_plr=function (plr, dx, dy)
-            -- Calcula a nova posição
-            local new_x = plr.x + dx
-            local new_y = plr.y + dy
-            local solid_t = 0
-            local liquid_t = 1
-            if char_colision("top", new_x, new_y, solid_t) then
-                plr.x = plr.x + 1
-                plr.y = plr.y + 1
-            elseif char_colision("bottom", new_x, new_y, solid_t) then
-                plr.x = plr.x - 1
-                plr.y = plr.y - 1
-            elseif char_colision("top", new_x, new_y, liquid_t) then
-                
-            end
-
+    plr.collision=function (plr, flag)
+        local ptx1 = flr(plr.x / 8)
+        local pty1 = flr(plr.y / 8)
+        local ptx2 = flr((plr.x + 7) / 8)
+        local pty2 = flr((plr.y + 7) / 8)
+    
+        -- Verifica as flags em cada canto
+        return fget(mget(ptx1, pty1), flag) or
+               fget(mget(ptx2, pty1), flag) or
+               fget(mget(ptx1, pty2), flag) or
+               fget(mget(ptx2, pty2), flag)
     end
     
     plr.updt = function(self)
+        local lx = plr.x
+        local ly = plr.y
         if btn(⬅️) then
             self.x = self.x - self.spd
             self.spr = 4
             self.flp=true
             plr_dir="left"
-            self:move_plr(-1, 0)
         elseif btn(➡️) then
             self.x = self.x + self.spd
             self.spr = 4
             self.flp=false
             plr_dir="right"
-            self:move_plr(1, 0)
         end
         if btn(⬆️) then
             self.y = self.y - self.spd
             self.spr=7
             plr_dir="up"
-            self:move_plr(0, -1)
         elseif btn(⬇️) then
             self.y = self.y + self.spd
             self.spr=1
             plr_dir="down"
-            self:move_plr(0, 1)
         end
+
         self:clr_damage()
-        self.dx=self.x
-        self.dy=self.y
+        if self:collision(0) then
+            self.x=lx self.dx=lx
+            self.y=ly self.dy=ly
+        end
     end
     
     plr['draw'] = function(self)
@@ -143,14 +141,14 @@ function init_enmies()
             enemy.dy = enemy.y + sin(angle) * enemy.speed
             print("!", enemy.dx-8, enemy.dy + 15)
             collision(enemy)
-              if dist <= 10 then
-                enemy.colision = true
-                if time() % 0.50 == 0 then
-                      plr:damaged(enemy.damage)
-                end
-              else
-                  enemy.colision = false
-              end
+            if dist <= 10 then
+            enemy.colision = true
+            if time() % 0.50 == 0 then
+                plr:damaged(enemy.damage)
+            end
+            else
+                enemy.colision = false
+            end
             end
            end
     end

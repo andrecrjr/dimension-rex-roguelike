@@ -4,6 +4,6 @@ function menu_game()
     print("level "..plr.level, 100, 121.5)
 
     menuitem(1, "status", function() 
-
+        
     end)
 end
