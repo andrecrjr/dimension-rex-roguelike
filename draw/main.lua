@@ -1,10 +1,9 @@
 function _draw()
-    cls(3)
+    cls()
     map()
     plr:draw()
-    print(plr.health, 0, 0, 5)
     enmies:draw()
-    phase:gen_map()
     phase:drop_items()
+    phase:gen_map()
     menu_game()
 end

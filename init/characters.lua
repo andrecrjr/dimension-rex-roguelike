@@ -13,7 +13,9 @@ function init_plr()
         h=8,
         dx=0,
         dy=1,
-        level=1
+        level=1,
+        skills={
+        }
     }
 
     plr.collision=function (plr, flag)
@@ -101,13 +103,12 @@ function init_enmy()
         local ptx2 = flr((enmy.dx + 7) / 8)
         local pty2 = flr((enmy.dy + 7) / 8)
         
-        -- Verifica a flag nos quatro cantos do sprite do inimigo
-        local collision1 = fget(mget(ptx1, pty1), 0)
-        local collision2 = fget(mget(ptx2, pty1), 0)
-        local collision3 = fget(mget(ptx1, pty2), 0)
-        local collision4 = fget(mget(ptx2, pty2), 0)
-    
-        if not (collision1 or collision2 or collision3 or collision4) then
+        local col1 = has_flag(ptx1, pty1, 0)
+        local col2 = has_flag(ptx2, pty1, 0)
+        local col3 = has_flag(ptx1, pty2, 0)
+        local col4 = has_flag(ptx2, pty2, 0)
+
+        if not (col1 or col2 or col3 or col4) then
             enmy.x = enmy.dx 
             enmy.y = enmy.dy
         end

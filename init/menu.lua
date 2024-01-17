@@ -1,8 +1,8 @@
 function menu_game()
-    rectfill(127, 119, 0, 127, 4)
-    rect(5, 127, 15, 119, 2)
-    print("level "..plr.level, 100, 121.5)
-
+    rectfill(127, 0, 0, 8, 4)
+    rect(40, 0, 48, 8, 2)
+    print("♥"..plr.health, 4,  2.2, 14)
+    print("lvl "..plr.level, 80, 2.2, 2)
     menuitem(1, "status", function() 
         
     end)
