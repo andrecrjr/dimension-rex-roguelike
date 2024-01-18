@@ -19,7 +19,7 @@ function init_phase()
       probs = {
         grass = rnd(0.4)+0.1, -- 50% de chance de ser grama
         water = 0.1, -- 20% de chance de ser れくgua
-        tree=rnd(0.03)+0.1,
+        tree=rnd(0.03)+0.08,
         sand = 0.01, -- 15% de chance de ser areia
         rock = 0.01 -- 15% de chance de ser rocha
       },

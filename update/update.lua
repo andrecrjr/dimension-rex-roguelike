@@ -1,4 +1,4 @@
 function _update()
     plr:updt()
-    --enmies:follow()
+    enmies:follow()
 end
