@@ -1,9 +1,10 @@
 function _draw()
-    cls()
+    cls(3)
     map()
     plr:draw()
     enmies:draw()
     phase:drop_items()
     phase:gen_map()
+    phase:spwn_enemies()
     menu_game()
 end

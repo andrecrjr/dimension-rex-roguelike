@@ -5,8 +5,10 @@ function distance(obj1, obj2)
     return dist
 end
 
-function has_flag(x, y, f)
+function has_flag(x, y, f,coords)
     -- Substitua 'f' pelo número da flag que indica um tile sólido
+    if coords==true then
+        return mget(x, y)
+    end
     return fget(mget(x, y), f)
-  end
-  
+end

@@ -14,21 +14,30 @@ function init_plr()
         dx=0,
         dy=1,
         level=1,
+        inv={
+            gun={
+                active=false,
+                bul=15,
+                spd=2
+            }
+        },
         skills={
         }
     }
 
-    plr.collision=function (plr, flag)
+    plr.collision=function (plr, flag, coords)
         local ptx1 = flr(plr.x / 8)
         local pty1 = flr(plr.y / 8)
         local ptx2 = flr((plr.x + 7) / 8)
         local pty2 = flr((plr.y + 7) / 8)
         -- Verifica as flags em cada canto
-        return has_flag(ptx1, pty1, flag) or
-               has_flag(ptx2, pty1, flag) or
-               has_flag(ptx1, pty2, flag) or
-               has_flag(ptx2, pty2, flag)
+
+        return has_flag(ptx1, pty1, flag, coords) or
+               has_flag(ptx2, pty1, flag, coords) or
+               has_flag(ptx1, pty2, flag, coords) or
+               has_flag(ptx2, pty2, flag, coords)
     end
+    
     
     plr.updt = function(self)
         local lx = plr.x
@@ -55,6 +64,7 @@ function init_plr()
         end
 
         self:clr_damage()
+        phase:get_itms()
         if self:collision(0) then
             self.x=lx self.dx=lx
             self.y=ly self.dy=ly
@@ -113,7 +123,7 @@ function init_enmy()
             enmy.y = enmy.dy
         end
    end
-    enmy.spwn_enmy=function(self, table)
+    enmy.add_enmy=function(self, table)
         add(table, self)
     end
     return enmy
