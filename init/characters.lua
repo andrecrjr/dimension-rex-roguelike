@@ -69,6 +69,9 @@ function init_plr()
             self.x=lx self.dx=lx
             self.y=ly self.dy=ly
         end
+        
+        self.x = mid(xmin, self.x, xmax)
+        self.y = mid(ymin, self.y, ymax)
     end
     
     plr['draw'] = function(self)

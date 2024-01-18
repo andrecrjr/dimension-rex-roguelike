@@ -6,7 +6,11 @@ function init_phase()
           h=30,
           wmap=127,
           hmap=126,
-          mnspc=1 --menuspace
+          mnspc=1,--menuspace
+          xmin = 0,
+          xmax = 128 - 8,
+          ymin = 8,
+          ymax = 128 - 8
         },
         generated=false,
         gen_itens=false,
@@ -119,7 +123,6 @@ function init_phase()
       local item = plr:collision(2,true)
       get_item=not get_item
       if item == 242 then
-        --mset(plrx, plry, 0)
         plr.health=plr.health+55.5
         mset(plrx, plry, 0)
       end
