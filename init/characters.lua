@@ -70,8 +70,8 @@ function init_plr()
             self.y=ly self.dy=ly
         end
         
-        self.x = mid(xmin, self.x, xmax)
-        self.y = mid(ymin, self.y, ymax)
+        self.x = mid(phase.map.xmin, self.x, phase.map.xmax)
+        self.y = mid(phase.map.ymin, self.y, phase.map.ymax)
     end
     
     plr['draw'] = function(self)
