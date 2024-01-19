@@ -16,9 +16,15 @@ function init_plr()
         level=1,
         inv={
             gun={
-                active=false,
-                bul=15,
-                spd=2
+                active=true,
+                count=5,
+                spd=2,
+                spr=227,
+                x=0,
+                y=0,
+                w=8,
+                h=8,
+                t=150
             }
         },
         skills={
@@ -37,7 +43,10 @@ function init_plr()
                has_flag(ptx1, pty2, flag, coords) or
                has_flag(ptx2, pty2, flag, coords)
     end
-    
+
+    plr.act=function(plr)
+        plr.inv.gun:updt()
+    end
     
     plr.updt = function(self)
         local lx = plr.x
@@ -61,6 +70,11 @@ function init_plr()
             self.y = self.y + self.spd
             self.spr=1
             plr_dir="down"
+        elseif btnp(❎,0) then
+            if plr.inv.gun.count>0 then
+                plr.inv.gun:shoot()
+                plr.inv.gun.count-=1
+            end
         end
 
         self:clr_damage()
@@ -69,26 +83,28 @@ function init_plr()
             self.x=lx self.dx=lx
             self.y=ly self.dy=ly
         end
-        
+        self:act()
+
         self.x = mid(phase.map.xmin, self.x, phase.map.xmax)
         self.y = mid(phase.map.ymin, self.y, phase.map.ymax)
     end
     
-    plr['draw'] = function(self)
+    plr.draw = function(self)
         spr(self.spr, self.x, self.y, 1,1, self.flp)
         if self.damage > 0 then
             print(-self.damage, self.x, self.y - 8,8)
         end
+        self.inv.gun:draw()
     end
     
-    plr['damaged']= function (self, damage)
+    plr.damaged= function (self, damage)
         if damage > 0 then
             self.health = self.health - damage
             self.damage=damage
         end
     end
     
-    plr['clr_damage'] = function(self)
+    plr.clr_damage = function(self)
         if self.damage>0 and time() % 2 == 0 then
             self.damage = 0
         end
@@ -108,7 +124,9 @@ function init_enmy()
         dy=0,
         min_dist=mid(25,35,55),
         reach=false,
-        flp=false
+        flp=false,
+        w=8,
+        h=8
     }
     enmy.collision = function (enmy)
         local ptx1 = flr(enmy.dx / 8)

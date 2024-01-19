@@ -83,31 +83,34 @@ function init_phase()
   end
 
   phase['drop_items'] = function(self) 
-    local gun = { sp=240, spwn=false}
-    local tr = {prob=0.00009, sp=241, spwn=false}
+    local gun = { sp=240, spwn=false, maxspwn=2}
+    local tr = {prob=0.00009, sp=241, spwn=false, maxspwn=1}
     local hp = {prob=0.005, sp=242, spwn=false, count=0, maxspwn=3}
+    local rkey= {sp=226, spwn=false, maxspwn=1, count=0}
     if self.generated and not self.gen_itens then
       for x = 0, self.map.w do
         for y = self.map.mnspc, self.map.h do
           local r = rnd(1)
           local tile = mget(x, y)
           if  not fget(tile, 0) and not gun.spwn then
-            local gunx=flr(rnd(self.map.wmap))/8 local guny=flr(rnd(self.map.hmap))/8
+            local gunx,guny=r_pos()
             mset(gunx, guny, 240)
             gun.spwn=true
           end
           if not fget(tile, 0) and r < tr.prob and not tr.spwn then
-            local trx=flr(rnd(self.map.wmap))/8 local try=flr(rnd(self.map.hmap))/8
+            local trx,try=r_pos()
             mset(trx, try, tr.sp)
             tr.spwn=true
           end
           if not fget(tile, 0) and r < hp.prob and not hp.spwn then
-            local trx=flr(rnd(self.map.wmap))/8 local try=flr(rnd(self.map.hmap))/8
+            local trx,try=r_pos()
             mset(trx, try, hp.sp)
-            hp.count+=1
-            if hp.count == hp.maxspwn then
-              hp.spwn=true
-            end
+            less_obj_map(hp)
+          end
+          if not fget(tile, 0) and not rkey.spwn then
+            local trx,try=r_pos()
+            mset(trx, try, rkey.sp)
+            less_obj_map(rkey)
           end
         end
       end
@@ -118,12 +121,11 @@ function init_phase()
   phase['get_itms']=function(self)
     local get_item=false
     if plr:collision(2) and not get_item then
-      local plrx=flr(plr.x/8)
-      local plry=flr(plr.y/8)
+      local plrx=flr(plr.x/8) local plry=flr(plr.y/8)
       local item = plr:collision(2,true)
       get_item=not get_item
       if item == 242 then
-        plr.health=plr.health+55.5
+        plr.health=plr.health+25.5
         mset(plrx, plry, 0)
       end
       if item==240 then
@@ -132,6 +134,7 @@ function init_phase()
           plr.inv.gun=true
         else
           plr.inv.gun.spd=plr.inv.gun.spd+0.2
+          plr.inv.gun.count+=4
         end
       end
     end
