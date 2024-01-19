@@ -124,11 +124,12 @@ function init_phase()
       local plrx=flr(plr.x/8) local plry=flr(plr.y/8)
       local item = plr:collision(2,true)
       get_item=not get_item
+      printh(item)
       if item == 242 then
         plr.health=plr.health+25.5
         mset(plrx, plry, 0)
-      end
-      if item==240 then
+      elseif item==240 then
+        printh("entrei tb")
         mset(plrx, plry, 0)
         if not plr.inv.gun then
           plr.inv.gun=true
@@ -136,6 +137,8 @@ function init_phase()
           plr.inv.gun.spd=plr.inv.gun.spd+0.2
           plr.inv.gun.count+=4
         end
+      elseif item==226 then
+        restart=true
       end
     end
   end
