@@ -37,7 +37,6 @@ function init_inv()
            
         local tile = mget(flr(bul.x / 8), flr(bul.y / 8)) -- obtém o tile na posição do projétil
         local flag = fget(tile, 0) -- obtém o valor do flag 0 do tile
-        printh(flag)
         if bul.x < 0 or bul.x > 127 or 
             bul.y < 0 or bul.y > 127 or flag then
             -- se sim, desativa o projétil
