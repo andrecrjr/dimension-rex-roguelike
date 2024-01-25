@@ -18,8 +18,10 @@ function collide(a, b)
 end
 
 function r_pos()
-    local rx = flr(rnd(phase.map.wmap))/8 local ry=flr(rnd(phase.map.hmap))/8
-    return rx, ry
+    local rx = (flr(rnd(phase.map.wmap))/8) or 1
+    local ry=(flr(rnd(phase.map.hmap)+1)/8)
+    if ry < 1 then ry=1 end
+    return flr(rx), flr(ry)
 end
 
 function less_obj_map(obj)

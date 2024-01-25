@@ -3,9 +3,7 @@ function _draw()
     map()
     plr:draw()
     enmies:draw()
-    phase:drop_items()
     phase:gen_map()
-    phase:spwn_enemies()
     menu_game()
     if restart==true then
         cls(3)
@@ -15,10 +13,6 @@ function _draw()
         phase.gen_itens=false
         enmies:draw()
         phase:gen_map()
-        phase:spwn_enemies()
-        phase:drop_items()
-        phase:gen_map()
-        phase:spwn_enemies()
         restart=false
     end
 end

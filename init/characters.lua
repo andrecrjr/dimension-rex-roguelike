@@ -112,10 +112,10 @@ function init_plr()
 end
 
 function init_enmy()
-
+    local enx,eny=r_pos()
     local enmy={
-        x = rnd(mid(plr.x+50, 100,120)), 
-        y = rnd(mid(plr.y+40, 100,120)), 
+        x = enx*8, 
+        y = eny*8, 
         speed = 0.6, -- velocidade de movimento
         spr = 16, -- sprite do inimigo
         colision=false,

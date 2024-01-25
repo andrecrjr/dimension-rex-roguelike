@@ -17,15 +17,15 @@ function init_phase()
         tiles={
           grass = {192, 193}, -- tiles de grama
           water = {208,209,210,211}, -- tiles de れくgua
-          tree = {194}, -- tiles de areia
-          rock = {225} -- tiles de rocha
+          tree = {194},
+          rock = {225},
       },
       probs = {
         grass = rnd(0.4)+0.1, -- 50% de chance de ser grama
         water = 0.1, -- 20% de chance de ser れくgua
         tree=rnd(0.03)+0.08,
         sand = 0.01, -- 15% de chance de ser areia
-        rock = 0.01 -- 15% de chance de ser rocha
+        rock = 0.01, -- 15% de chance de ser rocha
       },
       solid_coords={},
       itens_coords={}
@@ -48,8 +48,6 @@ function init_phase()
             terrain = "water"
           elseif r < self.probs.water + self.probs.tree then
             terrain = "tree"
-            local sold={x=x*8,y=y*8}
-            add(self.solid_coords, sold)
           elseif r < self.probs.water + self.probs.tree + self.probs.rock then
             terrain = "rock"
           else
@@ -68,25 +66,36 @@ function init_phase()
                 terrain = "grass"
               end
             end
-
           end
           if plr.x/8 == x and plr.y/8 == y then
               terrain="grass"
           end
-          
+
           local tile = self.tiles[terrain][flr(rnd(#self.tiles[terrain])) + 1]
           mset(x, y, tile)
         end
       end
         self.generated=true
+        self:spwn_enemies()
+        self:pos_gen()
+        self:drop_items()
       end
+  end
+
+  phase['pos_gen'] = function (phase)
+    local rkey= {sp=226, spwn=false, count=0, maxspwn=1}
+    if not rkey.spwn then
+      local trx,try=r_pos()
+      mset(trx, try, rkey.sp)
+      less_obj_map(rkey)
+      rkey.spwn=true
+    end
   end
 
   phase['drop_items'] = function(self) 
     local gun = { sp=240, spwn=false, maxspwn=2}
     local tr = {prob=0.00009, sp=241, spwn=false, maxspwn=1}
     local hp = {prob=0.005, sp=242, spwn=false, count=0, maxspwn=3}
-    local rkey= {sp=226, spwn=false, maxspwn=1, count=0}
     if self.generated and not self.gen_itens then
       for x = 0, self.map.w do
         for y = self.map.mnspc, self.map.h do
@@ -107,11 +116,6 @@ function init_phase()
             mset(trx, try, hp.sp)
             less_obj_map(hp)
           end
-          if not fget(tile, 0) and not rkey.spwn then
-            local trx,try=r_pos()
-            mset(trx, try, rkey.sp)
-            less_obj_map(rkey)
-          end
         end
       end
       self.gen_itens=true
@@ -124,12 +128,10 @@ function init_phase()
       local plrx=flr(plr.x/8) local plry=flr(plr.y/8)
       local item = plr:collision(2,true)
       get_item=not get_item
-      printh(item)
       if item == 242 then
         plr.health=plr.health+25.5
         mset(plrx, plry, 0)
       elseif item==240 then
-        printh("entrei tb")
         mset(plrx, plry, 0)
         if not plr.inv.gun then
           plr.inv.gun=true
