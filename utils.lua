@@ -17,16 +17,30 @@ function collide(a, b)
     return a.x + a.w > b.x and a.x < b.x + b.w and a.y + a.h > b.y and a.y < b.y + b.h
 end
 
-function r_pos()
-    local rx = (flr(rnd(phase.map.wmap))/8) or 1
-    local ry=(flr(rnd(phase.map.hmap)+1)/8)
-    if ry < 1 then ry=1 end
-    return flr(rx), flr(ry)
-end
-
 function less_obj_map(obj)
     obj.count+=1
     if obj.count == obj.maxspwn then
       obj.spwn=true
     end
+end
+
+function rnd_map(size)
+    local x=rnd(phase.map.wmap)/8
+    local y=rnd(phase.map.hmap)/8+1
+
+    return flr(x),flr(y)
+end
+
+-- verifica se um tile é sólido
+function is_solid(x, y)
+    return has_flag(x,y,0)
+end
+
+function r_pos()
+    local x, y
+    repeat
+        x, y = rnd_map()
+    until not is_solid(x, y)
+    -- retorna a posição arredondada
+    return x, y
 end
