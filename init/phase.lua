@@ -131,8 +131,6 @@ function init_phase()
   end
 
   phase['get_itms']=function(self)
-    local get_item=false
-    if plr:collision(2) and not get_item then
       local plrx=flr(plr.x/8) local plry=flr(plr.y/8)
       local item = plr:collision(2,true)
       get_item=not get_item
@@ -149,7 +147,6 @@ function init_phase()
         end
       elseif item==226 then
         restart=true
-      end
     end
   end
 

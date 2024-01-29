@@ -24,6 +24,7 @@ function init_inv()
             bul.active=false
         end
 
+
         if bul.dir == "left" then
             bul.x = bul.x - bul.spd
         elseif bul.dir == "right" then
@@ -36,14 +37,18 @@ function init_inv()
            
         local tile = mget(flr(bul.x / 8), flr(bul.y / 8))
         local flag = fget(tile, 0) 
-        if bul.x < 0 or bul.x > 127 or 
-            bul.y < 0 or bul.y > 127 or flag then
-            bul.x = -100
+        is_solid(bul.x, bul.y, tile)
+        bulx = mid(phase.map.xmin, bul.x, phase.map.xmax)
+        buly = mid(phase.map.ymin, bul.y, phase.map.ymax)
+        if flag then
+            bul.x=-1000
+            
         end
+        printh(bul.x)
         for enemy in all(enmies) do 
             if collide(bul, enemy) then 
               del(enmies, enemy)
-              bul.x=-100
+              bul.x=-1000
             end
         end
         
