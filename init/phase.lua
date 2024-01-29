@@ -37,49 +37,46 @@ function init_phase()
       cls(3)
       local spwn = false
       -- inicializa o gerador de números pseudo-aleatórios com a seed
-      for x = 0, self.map.w do
-        for y = self.map.mnspc, self.map.h-2 do
-          
-          -- sorteia um nれむmero aleatれはrio entre 0 e 1
-          local r = rnd(1)
-          -- escolhe o tipo de terreno de acordo com a probabilidade
-          local terrain
-          if r < self.probs.water then
-            terrain = "water"
-          elseif r < self.probs.water + self.probs.tree then
-            terrain = "tree"
-          elseif r < self.probs.water + self.probs.tree + self.probs.rock then
-            terrain = "rock"
-          else
-            terrain = "grass"
-          end
-
-          if x == 0 or x == self.map.w or y == 0 or y == self.map.h then
-            -- se estiver, escolhe outro tipo de terreno que nれこo seja れくgua
-            while terrain == "water" do
-              r = rnd(1)
-              if r < self.probs.tree then
-                terrain = "tree"
-              elseif r < self.probs.tree + self.probs.rock then
-                terrain = "rock"
-              else
-                terrain = "grass"
-              end
+       for_maptile(function(x, y)
+        -- sorteia um nれむmero aleatれはrio entre 0 e 1
+        local r = rnd(1)
+        -- escolhe o tipo de terreno de acordo com a probabilidade
+        local terrain
+        if r < self.probs.water then
+          terrain = "water"
+        elseif r < self.probs.water + self.probs.tree then
+          terrain = "tree"
+        elseif r < self.probs.water + self.probs.tree + self.probs.rock then
+          terrain = "rock"
+        else
+          terrain = "grass"
+        end
+        if x == 0 or x == self.map.w or y == 0 or y == self.map.h then
+          -- se estiver, escolhe outro tipo de terreno que nれこo seja れくgua
+          while terrain == "water" do
+            r = rnd(1)
+            if r < self.probs.tree then
+              terrain = "tree"
+            elseif r < self.probs.tree + self.probs.rock then
+              terrain = "rock"
+            else
+              terrain = "grass"
             end
           end
-          if plr.x/8 == x and plr.y/8 == y then
-              terrain="grass"
-          end
-
-          local tile = self.tiles[terrain][flr(rnd(#self.tiles[terrain])) + 1]
-          mset(x, y, tile)
         end
+        if plr.x/8 == x and plr.y/8 == y then
+            terrain="grass"
+        end
+
+        local tile = self.tiles[terrain][flr(rnd(#self.tiles[terrain])) + 1]
+        mset(x, y, tile)
       end
-        self.generated=true
-        self:spwn_enemies()
-        self:pos_gen()
-        self:drop_items()
-      end
+    , self)
+    self.generated=true
+    self:spwn_enemies()
+    self:pos_gen()
+    self:drop_items()
+    end
   end
 
   phase['pos_gen'] = function (phase)
@@ -97,28 +94,26 @@ function init_phase()
     local tr = {prob=0.00009, sp=241, spwn=false, maxspwn=1}
     local hp = {prob=0.005, sp=242, spwn=false, count=0, maxspwn=3}
     if self.generated and not self.gen_itens then
-      for x = 0, self.map.w do
-        for y = self.map.mnspc, self.map.h do
-          local r = rnd(1)
-          local tile = mget(x, y)
-          if  not fget(tile, 0) and not gun.spwn then
-            local gunx,guny=r_pos()
-            mset(gunx, guny, 240)
-            gun.spwn=true
-          end
-          if not fget(tile, 0) and r < tr.prob and not tr.spwn then
-            local trx,try=r_pos()
-            mset(trx, try, tr.sp)
-            tr.spwn=true
-          end
-          if not fget(tile, 0) and r < hp.prob and not hp.spwn then
-            local trx,try=r_pos()
-            mset(trx, try, hp.sp)
-            less_obj_map(hp)
-          end
+      for_maptile(function(x, y)
+        local r = rnd(1)
+        local tile = mget(x, y)
+        if  not fget(tile, 0) and not gun.spwn then
+          local gunx,guny=r_pos()
+          mset(gunx, guny, 240)
+          gun.spwn=true
         end
-      end
-      self.gen_itens=true
+        if not fget(tile, 0) and r < tr.prob and not tr.spwn then
+          local trx,try=r_pos()
+          mset(trx, try, tr.sp)
+          tr.spwn=true
+        end
+        if not fget(tile, 0) and r < hp.prob and not hp.spwn then
+          local trx,try=r_pos()
+          mset(trx, try, hp.sp)
+          less_obj_map(hp)
+        end
+
+      end, self)
     end
   end
 

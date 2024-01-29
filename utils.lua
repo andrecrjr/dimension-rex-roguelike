@@ -44,3 +44,11 @@ function r_pos()
     -- retorna a posição arredondada
     return x, y
 end
+
+function for_maptile(f, self)
+    for x = 0, self.map.w do
+        for y = self.map.mnspc, self.map.h do
+            f(x,y)
+        end
+    end
+end
