@@ -7,10 +7,11 @@ end
 
 function has_flag(x, y, f,coords)
     -- Substitua 'f' pelo número da flag que indica um tile sólido
+    local flx, fly = flr(x)/8, flr(y)/8
     if coords==true then
-        return mget(x, y)
+        return mget(flx, fly)
     end
-    return fget(mget(x, y), f)
+    return fget(mget(flx, fly), f)
 end
 
 function collide(a, b)

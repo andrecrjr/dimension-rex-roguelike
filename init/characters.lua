@@ -32,10 +32,10 @@ function init_plr()
     }
 
     plr.collision=function (plr, flag, coords)
-        local ptx1 = flr(plr.x / 8)
-        local pty1 = flr(plr.y / 8)
-        local ptx2 = flr((plr.x + 7) / 8)
-        local pty2 = flr((plr.y + 7) / 8)
+        local ptx1 = plr.x 
+        local pty1 = plr.y
+        local ptx2 = plr.x + 7
+        local pty2 = plr.y + 7
         -- Verifica as flags em cada canto
 
         return has_flag(ptx1, pty1, flag, coords) or
@@ -130,10 +130,10 @@ function init_enmy()
         h=8
     }
     enmy.collision = function (enmy)
-        local ptx1 = flr(enmy.dx / 8)
-        local pty1 = flr(enmy.dy / 8)
-        local ptx2 = flr((enmy.dx + 7) / 8)
-        local pty2 = flr((enmy.dy + 7) / 8)
+        local ptx1 =enmy.dx
+        local pty1 =enmy.dy
+        local ptx2 =enmy.dx + 7
+        local pty2 =enmy.dy + 7
         
         local col1 = has_flag(ptx1, pty1, 0)
         local col2 = has_flag(ptx2, pty1, 0)
