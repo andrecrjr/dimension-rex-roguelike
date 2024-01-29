@@ -13,7 +13,7 @@ function init_plr()
         h=8,
         dx=0,
         dy=1,
-        level=1,
+        lvl=1,
         inv={
             gun={
                 active=true,
@@ -72,6 +72,7 @@ function init_plr()
             plr_dir="down"
         elseif btnp(❎,0) then
             if plr.inv.gun.count>0 then
+                plr.inv.gun.reach=false
                 plr.inv.gun:shoot()
                 plr.inv.gun.count-=1
             end
