@@ -114,6 +114,7 @@ function init_phase()
         end
 
       end, self)
+      self.gen_itens=true
     end
   end
 
