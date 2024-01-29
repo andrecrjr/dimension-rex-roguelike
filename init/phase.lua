@@ -16,13 +16,13 @@ function init_phase()
         gen_itens=false,
         tiles={
           grass = {192, 193}, -- tiles de grama
-          water = {208,209,210,211}, -- tiles de れくgua
+          water = {208,209}, -- tiles de れくgua
           tree = {194},
           rock = {225},
       },
       probs = {
         grass = rnd(0.4)+0.1, -- 50% de chance de ser grama
-        water = 0.1, -- 20% de chance de ser れくgua
+        water = 0.18, -- 20% de chance de ser れくgua
         tree=rnd(0.03)+0.08,
         sand = 0.01, -- 15% de chance de ser areia
         rock = 0.01, -- 15% de chance de ser rocha
@@ -37,7 +37,7 @@ function init_phase()
       cls(3)
       local spwn = false
       -- inicializa o gerador de números pseudo-aleatórios com a seed
-       for_maptile(function(x, y)
+    for_maptile(function(x, y)
         -- sorteia um nれむmero aleatれはrio entre 0 e 1
         local r = rnd(1)
         -- escolhe o tipo de terreno de acordo com a probabilidade
@@ -66,6 +66,7 @@ function init_phase()
         end
         if plr.x/8 == x and plr.y/8 == y then
             terrain="grass"
+            printh("entre")
         end
 
         local tile = self.tiles[terrain][flr(rnd(#self.tiles[terrain])) + 1]
@@ -76,6 +77,18 @@ function init_phase()
     self:spwn_enemies()
     self:pos_gen()
     self:drop_items()
+    end
+  end
+
+  phase['env'] = function(phase)
+    local env = plr:collision(1,true)
+    if env then
+      local oldspd = plr.spd
+      if env == 208 or env==209 then
+        plr.spd = 0.3
+      else
+        plr.spd = 1
+      end
     end
   end
 
@@ -112,7 +125,6 @@ function init_phase()
           mset(trx, try, hp.sp)
           less_obj_map(hp)
         end
-
       end, self)
       self.gen_itens=true
     end
@@ -140,6 +152,7 @@ function init_phase()
       end
     end
   end
+
 
   phase['spwn_enemies']=function(self)
     enmies:draw()

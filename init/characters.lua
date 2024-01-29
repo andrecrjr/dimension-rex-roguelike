@@ -78,6 +78,7 @@ function init_plr()
         end
 
         self:clr_damage()
+        phase:env()
         phase:get_itms()
         if self:collision(0) then
             self.x=lx self.dx=lx
