@@ -18,13 +18,15 @@ function init_plr()
             gun={
                 active=true,
                 count=5,
-                spd=2,
+                spd=1,
                 spr=227,
                 x=0,
                 y=0,
                 w=8,
                 h=8,
-                t=150
+                t=25,
+                shootenmy=false,
+                bullets={}
             }
         },
         skills={
@@ -72,9 +74,7 @@ function init_plr()
             plr_dir="down"
         elseif btnp(❎,0) then
             if plr.inv.gun.count>0 then
-                plr.inv.gun.reach=false
                 plr.inv.gun:shoot()
-                plr.inv.gun.count-=1
             end
         end
 
