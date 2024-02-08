@@ -17,14 +17,14 @@ function init_plr()
         inv={
             gun={
                 active=true,
-                count=5,
+                count=50,
                 spd=1,
                 spr=227,
                 x=0,
                 y=0,
                 w=8,
                 h=8,
-                t=25,
+                t=15,
                 shootenmy=false,
                 bullets={}
             }
@@ -38,8 +38,6 @@ function init_plr()
         local pty1 = plr.y
         local ptx2 = plr.x + 7
         local pty2 = plr.y + 7
-        -- Verifica as flags em cada canto
-
         return has_flag(ptx1, pty1, flag, coords) or
                has_flag(ptx2, pty1, flag, coords) or
                has_flag(ptx1, pty2, flag, coords) or
@@ -58,21 +56,26 @@ function init_plr()
             self.spr = 4
             self.flp=true
             plr_dir="left"
+            plr.dtx=-1 plr.dty=0
         elseif btn(➡️) then
             self.x = self.x + self.spd
             self.spr = 4
             self.flp=false
             plr_dir="right"
+            plr.dtx=1 plr.dty=0
         end
         if btn(⬆️) then
             self.y = self.y - self.spd
             self.spr=7
             plr_dir="up"
+            plr.dtx=0 plr.dty=-1
         elseif btn(⬇️) then
             self.y = self.y + self.spd
             self.spr=1
             plr_dir="down"
-        elseif btnp(❎,0) then
+            plr.dtx=0 plr.dty=1
+        end
+        if btnp(❎) then
             if plr.inv.gun.count>0 then
                 plr.inv.gun:shoot()
             end

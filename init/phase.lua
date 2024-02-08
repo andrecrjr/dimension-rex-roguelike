@@ -23,12 +23,10 @@ function init_phase()
       probs = {
         grass = rnd(0.4)+0.1, -- 50% de chance de ser grama
         water = 0.18, -- 20% de chance de ser れくgua
-        tree=rnd(0.03)+0.08,
+        tree=rnd(0.001)+0.02,
         sand = 0.01, -- 15% de chance de ser areia
         rock = 0.01, -- 15% de chance de ser rocha
-      },
-      solid_coords={},
-      itens_coords={}
+      }
     }  
 
   phase['gen_map'] = function(self)
@@ -66,9 +64,7 @@ function init_phase()
         end
         if plr.x/8 == x and plr.y/8 == y then
             terrain="grass"
-            printh("entre")
         end
-
         local tile = self.tiles[terrain][flr(rnd(#self.tiles[terrain])) + 1]
         mset(x, y, tile)
       end
