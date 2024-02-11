@@ -42,7 +42,6 @@ function r_pos()
     repeat
         x, y = rnd_map()
     until not is_solid(x, y)
-    -- retorna a posição arredondada
     return x, y
 end
 
