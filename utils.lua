@@ -26,15 +26,13 @@ function less_obj_map(obj)
 end
 
 function rnd_map(size)
-    local x=rnd(phase.map.wmap)/8
-    local y=rnd(phase.map.hmap)/8+1
-
+    local x=(rnd(14))+1
+    local y=(rnd(14))+1
     return flr(x),flr(y)
 end
 
--- verifica se um tile é sólido
 function is_solid(x, y)
-    return has_flag(x,y,0)
+    return has_flag(x,y,0) and has_flag(x,y,0) ~= 64
 end
 
 function r_pos()

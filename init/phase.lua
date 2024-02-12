@@ -23,11 +23,11 @@ function init_phase()
       probs = {
         grass = rnd(0.4)+0.1, -- 50% de chance de ser grama
         water = 0.18, -- 20% de chance de ser れくgua
-        tree=rnd(0.001)+0.02,
+        tree=rnd(0.008)+0.02,
         sand = 0.01, -- 15% de chance de ser areia
         rock = 0.01, -- 15% de chance de ser rocha
       }
-    }  
+    }
 
   phase['gen_map'] = function(self)
     -- define a seed
@@ -89,12 +89,12 @@ function init_phase()
   end
 
   phase['pos_gen'] = function (phase)
-    local rkey= {sp=226, spwn=false, count=0, maxspwn=1}
-    if not rkey.spwn then
+    local portal= {sp=226, spwn=false, count=0, maxspwn=1}
+    if not portal.spwn then
       local trx,try=r_pos()
-      mset(trx, try, rkey.sp)
-      less_obj_map(rkey)
-      rkey.spwn=true
+      mset(mid(0,trx, 15), mid(11, try, 15), portal.sp)
+      less_obj_map(portal)
+      portal.spwn=true
     end
   end
 
@@ -131,7 +131,7 @@ function init_phase()
       local item = plr:collision(2,true)
       get_item=not get_item
       if item == 242 then
-        plr.health=plr.health+25.5
+        plr.health=plr.health+flr(rnd(25)+5)
         mset(plrx, plry, 0)
       elseif item==240 then
         mset(plrx, plry, 0)

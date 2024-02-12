@@ -30,18 +30,18 @@ function init_inv()
                 bullet.x += cos(bullet.dir) * bullet.spd
                 bullet.y += sin(bullet.dir) * bullet.spd
                 bullet.t -= 1
-                local tile = mget(flr(bullet.x / 8), flr(bullet.y / 8))
-                local flag_s = fget(tile, 0)
+                local flag_s = has_flag(bullet.x, bullet.y, 0, false)
                 for enemy in all(enmies) do
                     if collide(bullet, enemy) then
                         del(enmies, enemy)
                         del(bul.bullets, bullet)
+                        plr.xp+=0.5 plr.kill+=1
                     end
                 end
                     if (bullet.x < 0 or bullet.x > 127 
                             or bullet.y < 0 or 
                             bullet.y > 127 or bullet.t <= 0) 
-                            or bullet.t==0 or flag_s or flag_enmy then
+                            or bullet.t==0 or flag_s then
                         del(bul.bullets, bullet) -- remove o projetil da lista de balas
                     end
             end

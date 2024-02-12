@@ -14,6 +14,8 @@ function init_plr()
         dx=0,
         dy=1,
         lvl=1,
+        xp=0,
+        kill=0,
         inv={
             gun={
                 active=true,
