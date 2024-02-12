@@ -9,7 +9,7 @@ function init_inv()
         local bul = {}
         bul.x = x bul.y = y bul.dir = dir 
         bul.spd = spd bul.spr = spr
-        bul.t = t bul.w=4 bul.h=4
+        bul.t = t bul.w=2 bul.h=2
         add(plr.inv.gun.bullets, bul)
     end
 

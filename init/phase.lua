@@ -15,15 +15,15 @@ function init_phase()
         generated=false,
         gen_itens=false,
         tiles={
-          grass = {192, 193}, -- tiles de grama
+          grass = {192, 193, 194}, -- tiles de grama
           water = {208,209}, -- tiles de れくgua
-          tree = {194},
+          tree = {195},
           rock = {225},
       },
       probs = {
-        grass = rnd(0.4)+0.1, -- 50% de chance de ser grama
+        grass = rnd(0.2)+0.1, -- 50% de chance de ser grama
         water = 0.18, -- 20% de chance de ser れくgua
-        tree=rnd(0.008)+0.02,
+        tree=rnd(0.01)+0.02,
         sand = 0.01, -- 15% de chance de ser areia
         rock = 0.01, -- 15% de chance de ser rocha
       }
@@ -49,19 +49,6 @@ function init_phase()
         else
           terrain = "grass"
         end
-        if x == 0 or x == self.map.w or y == 0 or y == self.map.h then
-          -- se estiver, escolhe outro tipo de terreno que nれこo seja れくgua
-          while terrain == "water" do
-            r = rnd(1)
-            if r < self.probs.tree then
-              terrain = "tree"
-            elseif r < self.probs.tree + self.probs.rock then
-              terrain = "rock"
-            else
-              terrain = "grass"
-            end
-          end
-        end
         if plr.x/8 == x and plr.y/8 == y then
             terrain="grass"
         end
@@ -80,10 +67,13 @@ function init_phase()
     local env = plr:collision(1,true)
     if env then
       local oldspd = plr.spd
-      if env == 208 or env==209 then
-        plr.spd = 0.3
+      if env == 208 or env==209 or env==210 then
+        plr.spd = 0.5
+        plr.spr = 8
+        plr.inv.gun.active=false
       else
         plr.spd = 1
+        plr.inv.gun.active=true
       end
     end
   end

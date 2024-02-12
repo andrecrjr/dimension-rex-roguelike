@@ -3,7 +3,8 @@ function init_plr()
         x = 32,
         y = 16,
         spr = 1, 
-        spd = 1.25,
+        spd = 1.5,
+        spr_time=0,
         h= 100,
         flp=false,
         health=100,
@@ -19,7 +20,7 @@ function init_plr()
         inv={
             gun={
                 active=true,
-                count=50,
+                count=15,
                 spd=1,
                 spr=227,
                 x=0,
@@ -87,8 +88,7 @@ function init_plr()
         phase:env()
         phase:get_itms()
         if self:collision(0) then
-            self.x=lx self.dx=lx
-            self.y=ly self.dy=ly
+            self.x=lx self.y=ly
         end
         self:act()
 
@@ -141,10 +141,10 @@ function init_enmy()
         local ptx2 =enmy.dx + 7
         local pty2 =enmy.dy + 7
         
-        local col1 = has_flag(ptx1, pty1, 0)
-        local col2 = has_flag(ptx2, pty1, 0)
-        local col3 = has_flag(ptx1, pty2, 0)
-        local col4 = has_flag(ptx2, pty2, 0)
+        local col1 = has_flag(ptx1, pty1, 0) or has_flag(ptx1, pty1, 1)
+        local col2 = has_flag(ptx2, pty1, 0) or has_flag(ptx2, pty1, 1)
+        local col3 = has_flag(ptx1, pty2, 0) or has_flag(ptx2, pty1, 1)
+        local col4 = has_flag(ptx2, pty2, 0) or has_flag(ptx2, pty1, 1)
 
         if not (col1 or col2 or col3 or col4) then
             enmy.x = enmy.dx 
@@ -187,7 +187,7 @@ function init_enmies()
             print("!", enemy.dx-8, enemy.dy + 15)
             enemy:collision()
             if dist <= 10 then
-            enemy.colision = true
+                enemy.colision = true
             if time() % 0.50 == 0 then
                 plr:damaged(enemy.damage)
             end

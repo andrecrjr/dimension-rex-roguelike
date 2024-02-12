@@ -50,3 +50,18 @@ function for_maptile(f, self)
         end
     end
 end
+
+
+function animation(plr, speed, init_sprite, last_sprite, speed_between)
+    local animation_speed = speed
+    if plr.spr_time < animation_speed then
+     plr.spr_time += 1
+    else
+     if plr['spr'] < last_sprite then
+         plr['spr'] += speed_between
+     else
+         plr['spr'] = init_sprite
+     end
+     plr.spr_time=0
+    end
+ end
