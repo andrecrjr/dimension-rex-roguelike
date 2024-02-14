@@ -15,24 +15,50 @@ function init_phase()
         generated=false,
         gen_itens=false,
         tiles={
-          grass = {192, 193, 194}, -- tiles de grama
-          water = {208,209}, -- tiles de れくgua
-          tree = {195},
-          rock = {225},
+          normal = {192, 193, 194}, -- grass
+          liq = {208,209}, --liquid/water
+          solid = {195}, --tree
+          sol_two = {225}, --rock
+      },
+      select="jurassic",
+      biomes={
+        chose=false,
+        jurassic={
+            normal = {192, 193, 194}, -- grass
+            liq = {208,209}, --liquid/water
+            solid = {195}, --tree
+            sol_two = {225}, --rock
+            bgcolor=3
+        },
+        shroom={
+          normal = {176, 177}, -- grass
+          liq = {208,209}, --liquid/water
+          solid = {179}, --tree
+          sol_two = {178}, --rock
+          bgcolor=2
+        }
       },
       probs = {
-        grass = rnd(0.2)+0.1, -- 50% de chance de ser grama
-        water = 0.18, -- 20% de chance de ser れくgua
-        tree=rnd(0.01)+0.02,
-        sand = 0.01, -- 15% de chance de ser areia
-        rock = 0.01, -- 15% de chance de ser rocha
+        normal = rnd(0.2)+0.1, -- normal
+        liq = 0.18, -- water
+        solid=rnd(0.01)+0.02,
+        sand = 0.01, -- sand(?)
+        sol_two = 0.01, -- rock
       }
     }
-
+  phase["biome_rnd"]=function(phase)
+      if not phase.biomes.chose then
+        if  flr(rnd(3)) < 2 then
+            phase.select="jurassic"
+        else
+            phase.select="shroom"
+        end
+        phase.biomes.chose=true
+    end
+  end
   phase['gen_map'] = function(self)
     -- define a seed
     if not self.generated then
-      cls(3)
       local spwn = false
       -- inicializa o gerador de números pseudo-aleatórios com a seed
     for_maptile(function(x, y)
@@ -40,19 +66,21 @@ function init_phase()
         local r = rnd(1)
         -- escolhe o tipo de terreno de acordo com a probabilidade
         local terrain
-        if r < self.probs.water then
-          terrain = "water"
-        elseif r < self.probs.water + self.probs.tree then
-          terrain = "tree"
-        elseif r < self.probs.water + self.probs.tree + self.probs.rock then
-          terrain = "rock"
+        if r < self.probs.liq then
+          terrain = "liq"
+        elseif r < self.probs.liq + self.probs.solid then
+          terrain = "solid"
+        elseif r < self.probs.liq + self.probs.solid + self.probs.sol_two then
+          terrain = "sol_two"
         else
-          terrain = "grass"
+          terrain = "normal"
         end
         if plr.x/8 == x and plr.y/8 == y then
-            terrain="grass"
+            terrain="normal"
         end
-        local tile = self.tiles[terrain][flr(rnd(#self.tiles[terrain])) + 1]
+        printh("nnn"..phase.select)
+        local tile = self.biomes[self.select][terrain][flr(rnd(#self.tiles[terrain])) + 1]
+        --local tile = self.tiles[terrain][flr(rnd(#self.tiles[terrain])) + 1]
         mset(x, y, tile)
       end
     , self)
@@ -63,7 +91,7 @@ function init_phase()
     end
   end
 
-  phase['env'] = function(phase)
+  phase['env_effects'] = function(phase)
     local env = plr:collision(1,true)
     if env then
       local oldspd = plr.spd

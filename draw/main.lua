@@ -1,12 +1,13 @@
 function _draw()
-    cls(3)
+    cls(phase.biomes[phase.select].bgcolor)
     map()
     plr:draw()
     enmies:draw()
     phase:gen_map()
     menu_game()
     if restart==true then
-        cls(3)
+        phase:biome_rnd()
+        phase.biomes.chose=false
         plr.x=32
         plr.y=16
         for i = 1, rnd(plr.lvl)+8 do

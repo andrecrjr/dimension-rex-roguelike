@@ -85,7 +85,7 @@ function init_plr()
         end
 
         self:clr_damage()
-        phase:env()
+        phase:env_effects()
         phase:get_itms()
         if self:collision(0) then
             self.x=lx self.y=ly
@@ -174,10 +174,7 @@ function init_enmies()
     end
     enmies.follow= function(self)
         for enemy in all(self) do
-            -- calcula a distancia entre o inimigo e o jogador
-            local dx = plr.x - enemy.x
-            local dy = plr.y - enemy.y
-            dist = sqrt(dx * dx + dy * dy)
+            local dist, dx, dy = distance(plr, enemy)
             enemy.reach=false
             if dist < enemy.min_dist then
               enemy.reach=true
@@ -186,7 +183,7 @@ function init_enmies()
             enemy.dy = enemy.y + sin(angle) * enemy.speed
             print("!", enemy.dx-8, enemy.dy + 15)
             enemy:collision()
-            if dist <= 10 then
+            if dist <= 7 then
                 enemy.colision = true
             if time() % 0.50 == 0 then
                 plr:damaged(enemy.damage)
