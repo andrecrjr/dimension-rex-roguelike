@@ -47,13 +47,9 @@ function init_phase()
       }
     }
   phase["biome_rnd"]=function(phase)
-      if not phase.biomes.chose then
-        if  flr(rnd(3)) < 2 then
-            phase.select="jurassic"
-        else
-            phase.select="shroom"
-        end
-        phase.biomes.chose=true
+    if not phase.biomes.chose then
+      phase.select = (flr(rnd(3)) < 2) and "jurassic" or "shroom"
+      phase.biomes.chose = true
     end
   end
   phase['gen_map'] = function(self)
@@ -62,9 +58,7 @@ function init_phase()
       local spwn = false
       -- inicializa o gerador de números pseudo-aleatórios com a seed
     for_maptile(function(x, y)
-        -- sorteia um nれむmero aleatれはrio entre 0 e 1
         local r = rnd(1)
-        -- escolhe o tipo de terreno de acordo com a probabilidade
         local terrain
         if r < self.probs.liq then
           terrain = "liq"
@@ -78,9 +72,7 @@ function init_phase()
         if plr.x/8 == x and plr.y/8 == y then
             terrain="normal"
         end
-        printh("nnn"..phase.select)
         local tile = self.biomes[self.select][terrain][flr(rnd(#self.tiles[terrain])) + 1]
-        --local tile = self.tiles[terrain][flr(rnd(#self.tiles[terrain])) + 1]
         mset(x, y, tile)
       end
     , self)

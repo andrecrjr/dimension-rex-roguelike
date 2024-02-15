@@ -5,13 +5,13 @@ function distance(obj1, obj2)
     return dist, dx, dy
 end
 
-function has_flag(x, y, f,coords)
-    -- Substitua 'f' pelo número da flag que indica um tile sólido
-    local flx, fly = flr(x)/8, flr(y)/8
-    if coords==true then
-        return mget(flx, fly)
+function has_flag(x, y, flag, coords)
+    local tile_x, tile_y = flr(x / 8), flr(y / 8)  
+    if coords then
+        return mget(tile_x, tile_y)
+    else
+        return fget(mget(tile_x, tile_y), flag)
     end
-    return fget(mget(flx, fly), f)
 end
 
 function collide(a, b)
