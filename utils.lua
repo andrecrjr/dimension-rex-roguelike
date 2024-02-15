@@ -65,3 +65,8 @@ function animation(plr, speed, init_sprite, last_sprite, speed_between)
      plr.spr_time=0
     end
  end
+
+ function spawn_item(x, y, item_sp)
+    local itemx, itemy = r_pos()
+    mset(itemx, itemy, item_sp)
+end

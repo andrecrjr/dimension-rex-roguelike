@@ -37,10 +37,8 @@ function init_plr()
     }
 
     plr.collision=function (plr, flag, coords)
-        local ptx1 = plr.x 
-        local pty1 = plr.y
-        local ptx2 = plr.x + 7
-        local pty2 = plr.y + 7
+        local ptx1, pty1 = plr.x, plr.y
+        local ptx2, pty2 = ptx1 + 8, pty1 + 8
         return has_flag(ptx1, pty1, flag, coords) or
                has_flag(ptx2, pty1, flag, coords) or
                has_flag(ptx1, pty2, flag, coords) or
@@ -132,14 +130,29 @@ function init_enmy()
         min_dist=mid(25,35,55),
         reach=false,
         flp=false,
+        biome_spr={
+            jurassic={
+                up=19,
+                down=16,
+                left=20,
+                right=20,
+            },
+            shroom={
+                up=51,
+                down=48,
+                left=49,
+                right=49,
+            }
+        },
         w=8,
         h=8
     }
+
     enmy.collision = function (enmy)
         local ptx1 =enmy.dx
         local pty1 =enmy.dy
-        local ptx2 =enmy.dx + 7
-        local pty2 =enmy.dy + 7
+        local ptx2 =enmy.dx + 8
+        local pty2 =enmy.dy + 8
         
         local col1 = has_flag(ptx1, pty1, 0) or has_flag(ptx1, pty1, 1)
         local col2 = has_flag(ptx2, pty1, 0) or has_flag(ptx2, pty1, 1)
@@ -161,14 +174,15 @@ function init_enmies()
     enmies = {}
     enmies.draw=function (self)
         for enemy in all(self) do
+            local enmy_spr= enemy.biome_spr[phase.select]
             if enemy.reach then
-                if plr_dir == 'up' then enemy.spr=19 enemy.flp=false
-                elseif plr_dir == 'down' then enemy.spr=16 enemy.flp=false end
-                if plr_dir == 'left' then enemy.spr=20 enemy.flp=false
-                elseif plr_dir == 'right' then enemy.spr=20 enemy.flp=true end
+                if plr_dir == 'up' then enemy.spr=enmy_spr.up enemy.flp=false
+                elseif plr_dir == 'down' then enemy.spr=enmy_spr.down enemy.flp=false end
+                if plr_dir == 'left' then enemy.spr=enmy_spr.left enemy.flp=false
+                elseif plr_dir == 'right' then enemy.spr=enmy_spr.right enemy.flp=true end
                 spr(enemy.spr, enemy.x, enemy.y, 1,1, enemy.flp)
             else
-                spr(enemy.spr, enemy.x, enemy.y)
+                spr(enmy_spr.up, enemy.x, enemy.y)
             end
           end
     end

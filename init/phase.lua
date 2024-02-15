@@ -109,27 +109,24 @@ function init_phase()
   end
 
   phase['drop_items'] = function(self) 
-    local gun = { sp=240, spwn=false, maxspwn=2}
+    local gun = {sp=240, spwn=false, maxspwn=flr(rnd(2)+1), count=0}
     local tr = {prob=0.00009, sp=241, spwn=false, maxspwn=1}
-    local hp = {prob=0.005, sp=242, spwn=false, count=0, maxspwn=3}
+    local hp = {prob=0.005, sp=242, spwn=false, count=0, maxspwn=2}
     if self.generated and not self.gen_itens then
       for_maptile(function(x, y)
         local r = rnd(1)
         local tile = mget(x, y)
-        if  not fget(tile, 0) and not gun.spwn then
-          local gunx,guny=r_pos()
-          mset(gunx, guny, 240)
-          gun.spwn=true
-        end
-        if not fget(tile, 0) and r < tr.prob and not tr.spwn then
-          local trx,try=r_pos()
-          mset(trx, try, tr.sp)
-          tr.spwn=true
-        end
-        if not fget(tile, 0) and r < hp.prob and not hp.spwn then
-          local trx,try=r_pos()
-          mset(trx, try, hp.sp)
-          less_obj_map(hp)
+        if not fget(tile, 0) then
+            if not gun.spwn then
+                spawn_item(x, y, 240)
+                less_obj_map(gun)
+            elseif not tr.spwn and r < tr.prob then
+                spawn_item(x, y, tr.sp)
+                tr.spwn = true
+            elseif not hp.spwn and r < hp.prob then
+                spawn_item(x, y, hp.sp)
+                less_obj_map(hp)
+            end
         end
       end, self)
       self.gen_itens=true
