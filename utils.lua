@@ -1,3 +1,25 @@
+f={
+    solid=0,
+    liq=1,
+    colect=2,
+    enemy=3
+}
+
+function cojado_pallet()
+    for i = 0, 15 do
+        if i < 2 or i > 13 then
+            pal(i, i * 2)
+        end
+    end
+end
+
+function resetPalette()
+    for i = 0, 15 do
+        pal(i, i)
+    end
+end
+
+
 function distance(obj1, obj2)
     local dx = obj1.x - obj2.x
     local dy = obj1.y - obj2.y
@@ -6,7 +28,7 @@ function distance(obj1, obj2)
 end
 
 function has_flag(x, y, flag, coords)
-    local tile_x, tile_y = flr(x / 8), flr(y / 8)  
+    local tile_x, tile_y = x / 8, y / 8
     if coords then
         return mget(tile_x, tile_y)
     else

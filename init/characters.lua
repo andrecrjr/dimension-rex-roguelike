@@ -38,7 +38,7 @@ function init_plr()
 
     plr.collision=function (plr, flag, coords)
         local ptx1, pty1 = plr.x, plr.y
-        local ptx2, pty2 = ptx1 + 8, pty1 + 8
+        local ptx2, pty2 = ptx1 + 7, pty1 + 7
         return has_flag(ptx1, pty1, flag, coords) or
                has_flag(ptx2, pty1, flag, coords) or
                has_flag(ptx1, pty2, flag, coords) or
@@ -137,11 +137,17 @@ function init_enmy()
                 left=20,
                 right=20,
             },
-            shroom={
+            toad={
                 up=51,
                 down=48,
                 left=49,
                 right=49,
+            },
+            cojado={
+                up=59,
+                down=57,
+                left=58,
+                right=58,
             }
         },
         w=8,

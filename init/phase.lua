@@ -30,26 +30,34 @@ function init_phase()
             sol_two = {225}, --rock
             bgcolor=3
         },
-        shroom={
+        toad={
           normal = {176, 177}, -- grass
           liq = {208,209}, --liquid/water
           solid = {179}, --tree
           sol_two = {178}, --rock
           bgcolor=2
+        },
+        cojado={--cemetery
+          normal = {191,191,191}, -- grass
+          liq = {212,211}, --liquid/water
+          solid = {188, 189}, --tree
+          sol_two = {190}, --rock
+          bgcolor=13
         }
       },
       probs = {
         normal = rnd(0.2)+0.1, -- normal
-        liq = 0.18, -- water
-        solid=rnd(0.01)+0.02,
+        liq = 0.12, -- water
+        solid=rnd(0.06)+0.02,
         sand = 0.01, -- sand(?)
-        sol_two = 0.01, -- rock
+        sol_two = 0.04, -- rock
       }
     }
   phase["biome_rnd"]=function(phase)
     if not phase.biomes.chose then
-      phase.select = (flr(rnd(3)) < 2) and "jurassic" or "shroom"
-      phase.biomes.chose = true
+        local biome_options = {"jurassic", "toad", "cojado"}
+        phase.select = biome_options[flr(rnd(#biome_options)) + 1]
+        phase.biomes.chose = true
     end
   end
   phase['gen_map'] = function(self)
@@ -84,17 +92,19 @@ function init_phase()
   end
 
   phase['env_effects'] = function(phase)
-    local env = plr:collision(1,true)
-    if env then
-      local oldspd = plr.spd
-      if env == 208 or env==209 or env==210 then
-        plr.spd = 0.5
-        plr.spr = 8
-        plr.inv.gun.active=false
-      else
-        plr.spd = 1
-        plr.inv.gun.active=true
-      end
+    if plr:collision(f.liq) then
+      --water env effect
+      plr.spd = 0.58
+      plr.spr = 8
+      plr.inv.gun.active=false
+    else
+      plr.spd = 1
+      plr.inv.gun.active=true
+    end
+    if phase.select == "cojado" then
+      cojado_pallet()
+    else
+      resetPalette()
     end
   end
 
@@ -110,7 +120,7 @@ function init_phase()
 
   phase['drop_items'] = function(self) 
     local gun = {sp=240, spwn=false, maxspwn=flr(rnd(2)+1), count=0}
-    local tr = {prob=0.00009, sp=241, spwn=false, maxspwn=1}
+    local tr = {prob=0.000095, sp=241, spwn=false, maxspwn=1}
     local hp = {prob=0.005, sp=242, spwn=false, count=0, maxspwn=2}
     if self.generated and not self.gen_itens then
       for_maptile(function(x, y)
@@ -145,7 +155,6 @@ function init_phase()
         if not plr.inv.gun then
           plr.inv.gun=true
         else
-          plr.inv.gun.spd=plr.inv.gun.spd+0.2
           plr.inv.gun.count+=4
         end
       elseif item==226 then

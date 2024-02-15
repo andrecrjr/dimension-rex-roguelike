@@ -4,7 +4,7 @@ function menu_game()
     print("♥"..plr.health, 4,  2.2, 14)
     print("lvl "..plr.lvl, 80, 2.2, 2)
     print("x"..plr.inv.gun.count, 60, 2.2, 2)
-    menuitem(1, "status", function() 
+    menuitem(1, "stuck!!", function() 
         
     end)
 end
