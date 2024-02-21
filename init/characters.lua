@@ -37,8 +37,8 @@ function init_plr()
     }
 
     plr.collision=function (plr, flag, coords)
-        local ptx1, pty1 = plr.x, plr.y
-        local ptx2, pty2 = ptx1 + 7, pty1 + 7
+        ptx1, pty1 = plr.x, plr.y
+        ptx2, pty2 = ptx1 + 7, pty1 + 7
         return has_flag(ptx1, pty1, flag, coords) or
                has_flag(ptx2, pty1, flag, coords) or
                has_flag(ptx1, pty2, flag, coords) or

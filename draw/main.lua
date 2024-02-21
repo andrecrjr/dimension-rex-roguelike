@@ -1,4 +1,5 @@
 function _draw()
+    debug=true
     cls(phase.biomes[phase.select].bgcolor)
     map()
     plr:draw()
@@ -19,5 +20,8 @@ function _draw()
         phase.gen_itens=false
         phase:gen_map()
         restart=false
+    end
+    if debug then
+        rect(ptx1, pty1, ptx2, pty2, 9)
     end
 end
