@@ -148,6 +148,12 @@ function init_enmy()
                 down=57,
                 left=58,
                 right=58,
+            },
+            daniland={
+                up=63,
+                down=62,
+                left=61,
+                right=61, 
             }
         },
         w=8,

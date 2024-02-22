@@ -43,6 +43,13 @@ function init_phase()
           solid = {188, 189}, --tree
           sol_two = {190}, --rock
           bgcolor=13
+        },
+        daniland={
+          normal = {191,175,174}, -- grass
+          liq = {213,214}, --liquid/water
+          solid = {172, 189}, --tree
+          sol_two = {172}, --rock
+          bgcolor=14
         }
       },
       probs = {
@@ -55,7 +62,7 @@ function init_phase()
     }
   phase["biome_rnd"]=function(phase)
     if not phase.biomes.chose then
-        local biome_options = {"jurassic", "toad", "cojado"}
+        local biome_options = {"jurassic", "toad", "cojado", "daniland"}
         phase.select = biome_options[flr(rnd(#biome_options)) + 1]
         phase.biomes.chose = true
     end

@@ -1,5 +1,5 @@
 function _draw()
-    debug=true
+    debug=false
     cls(phase.biomes[phase.select].bgcolor)
     map()
     plr:draw()
