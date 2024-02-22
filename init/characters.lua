@@ -132,9 +132,9 @@ function init_enmy()
         flp=false,
         biome_spr={
             jurassic={
-                up=19,
+                up=20,
                 down=16,
-                left=20,
+                left=17,
                 right=20,
             },
             toad={
@@ -144,16 +144,16 @@ function init_enmy()
                 right=49,
             },
             cojado={
-                up=59,
-                down=57,
-                left=58,
-                right=58,
+                up=34,
+                down=32,
+                left=33,
+                right=33,
             },
             daniland={
-                up=63,
-                down=62,
-                left=61,
-                right=61, 
+                up=38,
+                down=37,
+                left=36,
+                right=36, 
             }
         },
         w=8,
