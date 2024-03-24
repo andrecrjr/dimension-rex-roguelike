@@ -45,9 +45,9 @@ function init_phase()
           bgcolor=13
         },
         daniland={
-          normal = {175,173,174}, -- grass
+          normal = {173,174}, -- grass
           liq = {213,214}, --liquid/water
-          solid = {172, 189}, --tree
+          solid = {172, 175}, --tree
           sol_two = {172}, --rock
           bgcolor=13
         }
@@ -62,7 +62,7 @@ function init_phase()
     }
   phase["biome_rnd"]=function(phase)
     if not phase.biomes.chose then
-        local biome_options = {"daniland"}
+        local biome_options = {"daniland", "cojado", "jurassic", "toad"}
         phase.select = biome_options[flr(rnd(#biome_options)) + 1]
         phase.biomes.chose = true
     end
@@ -100,7 +100,6 @@ function init_phase()
 
   phase['env_effects'] = function(phase)
     if plr:collision(f.liq) then
-      --water env effect
       plr.spd = 0.58
       plr.spr = 8
       plr.inv.gun.active=false

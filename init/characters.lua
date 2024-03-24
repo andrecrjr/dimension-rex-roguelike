@@ -22,13 +22,14 @@ function init_plr()
                 active=true,
                 count=15,
                 spd=1,
-                spr=227,
+                spr=228,
                 x=0,
                 y=0,
                 w=8,
                 h=8,
                 t=15,
                 shootenmy=false,
+                force=2,
                 bullets={}
             }
         },
@@ -92,6 +93,7 @@ function init_plr()
 
         self.x = mid(phase.map.xmin, self.x, phase.map.xmax)
         self.y = mid(phase.map.ymin, self.y, phase.map.ymax)
+        self:lvl_up()
     end
     
     plr.draw = function(self)
@@ -114,10 +116,21 @@ function init_plr()
             self.damage = 0
         end
     end
+
+    plr.lvl_up = function(self)
+        if plr.xp > plr.lvl * 4 then
+            plr.lvl+=1
+            plr.lvl_up = true
+            if time() % 5 == 0 then
+                plr.lvl_up=false
+            end
+        end
+    end
 end
 
 function init_enmy()
     local enx,eny=r_pos()
+    printh(flr(rnd(plr.lvl * 4)))
     local enmy={
         x = enx*8, 
         y = eny*8, 
@@ -130,6 +143,7 @@ function init_enmy()
         min_dist=mid(25,35,55),
         reach=false,
         flp=false,
+        hp=flr(rnd(plr.lvl * 4)),
         biome_spr={
             jurassic={
                 up=20,
@@ -186,6 +200,12 @@ function init_enmies()
     enmies = {}
     enmies.draw=function (self)
         for enemy in all(self) do
+            if enemy.hurt then
+                print(-plr.inv.gun.force, enemy.x+8, enemy.y-6, 8)
+                if time() % 2 == 0 then
+                    enemy.hurt = false
+                end
+            end
             local enmy_spr= enemy.biome_spr[phase.select]
             if enemy.reach then
                 if plr_dir == 'up' then enemy.spr=enmy_spr.up enemy.flp=false
@@ -196,6 +216,7 @@ function init_enmies()
             else
                 spr(enmy_spr.up, enemy.x, enemy.y)
             end
+
           end
     end
     enmies.follow= function(self)
@@ -207,13 +228,12 @@ function init_enmies()
             local angle = atan2(dx, dy)
             enemy.dx = enemy.x + cos(angle) * enemy.speed
             enemy.dy = enemy.y + sin(angle) * enemy.speed
-            print("!", enemy.dx-8, enemy.dy + 15)
             enemy:collision()
             if dist <= 7 then
                 enemy.colision = true
-            if time() % 0.50 == 0 then
-                plr:damaged(enemy.damage)
-            end
+                if time() % 0.50 == 0 then
+                    plr:damaged(enemy.damage)
+                end
             else
                 enemy.colision = false
             end

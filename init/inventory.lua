@@ -7,7 +7,7 @@ function init_inv()
 
     create_bullet=function(x, y, dir, spd, spr, t)
         local bul = {}
-        bul.x = x bul.y = y bul.dir = dir 
+        bul.x = x bul.y = y bul.dir = dir
         bul.spd = spd bul.spr = spr
         bul.t = t bul.w=2 bul.h=2
         add(plr.inv.gun.bullets, bul)
@@ -32,11 +32,18 @@ function init_inv()
                 bullet.t -= 1
                 local flag_s = has_flag(bullet.x, bullet.y, 0, false)
                 for enemy in all(enmies) do
+                    enemy.hurt = false
                     if collide(bullet, enemy) then
-                        del(enmies, enemy)
+                        enemy.hurt = true
+                        printh(enemy.hp)
+                        enemy.hp = enemy.hp - bul.force
+                        if enemy.hp <= 0 then
+                            del(enmies, enemy)
+                        end
                         del(bul.bullets, bullet)
                         plr.xp+=0.5 plr.kill+=1
                     end
+                    
                 end
                     if (bullet.x < 0 or bullet.x > 127 
                             or bullet.y < 0 or 
