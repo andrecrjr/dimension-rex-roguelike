@@ -35,13 +35,12 @@ function init_inv()
                     enemy.hurt = false
                     if collide(bullet, enemy) then
                         enemy.hurt = true
-                        printh(enemy.hp)
                         enemy.hp = enemy.hp - bul.force
                         if enemy.hp <= 0 then
                             del(enmies, enemy)
+                            plr.xp+=0.5 plr.kill+=1
                         end
                         del(bul.bullets, bullet)
-                        plr.xp+=0.5 plr.kill+=1
                     end
                     
                 end

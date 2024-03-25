@@ -118,7 +118,7 @@ function init_plr()
     end
 
     plr.lvl_up = function(self)
-        if self.xp > self.lvl * 4 then
+        if self.xp > self.lvl * 8 then
             self.lvl+=1
         end
     end
@@ -126,7 +126,6 @@ end
 
 function init_enmy()
     local enx,eny=r_pos()
-    printh(flr(rnd(plr.lvl * 4)))
     local enmy={
         x = enx*8, 
         y = eny*8, 
