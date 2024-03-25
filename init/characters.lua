@@ -118,12 +118,8 @@ function init_plr()
     end
 
     plr.lvl_up = function(self)
-        if plr.xp > plr.lvl * 4 then
-            plr.lvl+=1
-            plr.lvl_up = true
-            if time() % 5 == 0 then
-                plr.lvl_up=false
-            end
+        if self.xp > self.lvl * 4 then
+            self.lvl+=1
         end
     end
 end
@@ -143,7 +139,7 @@ function init_enmy()
         min_dist=mid(25,35,55),
         reach=false,
         flp=false,
-        hp=flr(rnd(plr.lvl * 4)),
+        hp=ceil(rnd(plr.lvl * 4)),
         biome_spr={
             jurassic={
                 up=20,
