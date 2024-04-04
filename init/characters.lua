@@ -123,8 +123,9 @@ function init_plr()
     end
 
     plr.lvl_up = function(self)
-        if self.xp > self.lvl * 8 then
+        if self.xp > self.lvl * 1 then
             self.lvl+=1
+            _update=_lvl_update
         end
     end
 

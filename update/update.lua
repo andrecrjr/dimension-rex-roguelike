@@ -14,3 +14,17 @@ function _dead_update()
     end
 end
 
+function _lvl_update()
+    _skills_init()
+    skill_draw_upt = false
+    if not skill_draw_upt then
+        skill_draw_upt = true
+    end
+    if btnp(➡️) then
+        printh("press right")
+        selected_skill = 1
+    elseif btnp(⬅️) then
+        printh("press left")
+        selected_skill = 2
+    end
+end

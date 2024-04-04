@@ -8,3 +8,8 @@ function _init()
         enmy:add_enmy(enmies)
     end
 end
+
+function _skills_init()
+    skills = {"Habilidade 1", "Habilidade 2"}
+    selected_skill = nil
+end
