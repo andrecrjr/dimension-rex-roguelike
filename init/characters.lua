@@ -94,10 +94,11 @@ function init_plr()
             self.x=lx self.y=ly
         end
         self:act()
-
+        
         self.x = mid(phase.map.xmin, self.x, phase.map.xmax)
         self.y = mid(phase.map.ymin, self.y, phase.map.ymax)
         self:lvl_up()
+        self:dead()
     end
     
     plr.draw = function(self)
@@ -125,6 +126,15 @@ function init_plr()
         if self.xp > self.lvl * 8 then
             self.lvl+=1
         end
+    end
+
+    plr.dead = function(self)
+        printh("entrei"..self.health)
+        if self.health <= 0 then
+            self.health=0
+            _update=_dead_update
+        end
+        
     end
 end
 

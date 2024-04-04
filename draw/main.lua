@@ -1,11 +1,11 @@
 function _draw()
     debug=true
     cls(phase.biomes[phase.select].bgcolor)
+    menu_game()
     map()
     plr:draw()
     enmies:draw()
     phase:gen_map()
-    menu_game()
     if restart==true then
         phase.biomes.chose=false
         phase:biome_rnd()
