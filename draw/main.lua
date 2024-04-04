@@ -1,5 +1,5 @@
 function _draw()
-    debug=false
+    debug=true
     cls(phase.biomes[phase.select].bgcolor)
     map()
     plr:draw()
@@ -22,6 +22,6 @@ function _draw()
         restart=false
     end
     if debug then
-        rect(ptx1, pty1, ptx2, pty2, 9)
+        rect(ptx1, pty1, ptx2, pty2, 6)
     end
 end
