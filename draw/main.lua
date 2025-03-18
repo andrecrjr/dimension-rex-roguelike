@@ -5,7 +5,6 @@ end
 
 
 function _draw_main_game()
-    cls()
     debug=false
     cls(phase.biomes[phase.select].bgcolor)
     menu_game()
