@@ -1,5 +1,12 @@
+
 function _draw()
-    debug=true
+    _draw=_draw_main_game
+end
+
+
+function _draw_main_game()
+    cls()
+    debug=false
     cls(phase.biomes[phase.select].bgcolor)
     menu_game()
     map()
@@ -23,20 +30,5 @@ function _draw()
     end
     if debug then
         rect(ptx1, pty1, ptx2, pty2, 6)
-    end
-    if skill_draw_upt then
-        _draw=_skill_draw
-
-    end
-end
-
-function _skill_draw()
-    for i, skill in ipairs(skills) do
-        if i == selected_skill then
-            -- Destaca a habilidade selecionada
-            print(">"..skill, 23, 20, 9)
-        else
-            print(skill.."-  - press ", 23, 35 * i, 9)
-        end
     end
 end

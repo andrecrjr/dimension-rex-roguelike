@@ -113,6 +113,7 @@ function init_plr()
         if damage > 0 then
             self.health = self.health - damage
             self.damage=damage
+            sfx(0)
         end
     end
     
@@ -125,12 +126,13 @@ function init_plr()
     plr.lvl_up = function(self)
         if self.xp > self.lvl * 1 then
             self.lvl+=1
+            game_state.lvl_up=true
             _update=_lvl_update
+            _draw=_skill_draw
         end
     end
 
     plr.dead = function(self)
-        printh("entrei"..self.health)
         if self.health <= 0 then
             self.health=0
             _update=_dead_update
