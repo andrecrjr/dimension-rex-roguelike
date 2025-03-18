@@ -26,32 +26,57 @@ function init_inv()
     
     plr.inv.gun.updt = function(bul)
         if bul.shootenmy then
-            for bullet in all(bul.bullets) do
+            for i = #bul.bullets, 1, -1 do -- Iterate backwards to safely remove bullets
+                local bullet = bul.bullets[i]
+                if not bullet then break end -- Safety check for nil bullet
+    
                 bullet.x += cos(bullet.dir) * bullet.spd
                 bullet.y += sin(bullet.dir) * bullet.spd
                 bullet.t -= 1
+    
                 local flag_s = has_flag(bullet.x, bullet.y, 0, false)
-                for enemy in all(enmies) do
-                    enemy.hurt = false
-                    if collide(bullet, enemy) then
-                        enemy.hurt = true
-                        enemy.hp = enemy.hp - bul.force
-                        if enemy.hp <= 0 then
-                            del(enmies, enemy)
-                            plr.xp+=0.5 plr.kill+=1
+                if flag_s or bullet.x < 0 or bullet.x > 127 or bullet.y < 0 or bullet.y > 127 or bullet.t <= 0 then
+                    del(bul.bullets, bullet)
+                else
+                    -- Optimized enemy collision check
+                    local hit = false
+                    for enemy in all(enmies) do
+                        if collide(bullet, enemy) then
+                            enemy.hurt = true
+                            enemy.hp -= bul.force
+    
+                            -- Add knockback effect (optional)
+                            local knockback = 2
+                            local new_x = enemy.x + cos(bullet.dir) * knockback
+                            local new_y = enemy.y + sin(bullet.dir) * knockback
+    
+                            -- Check if new position is valid (not solid)
+                            if not has_flag(new_x, new_y, 0, false) then
+                                enemy.x = new_x
+                                enemy.y = new_y
+                            end
+    
+                            -- Check if enemy is dead
+                            if enemy.hp <= 0 then
+                                del(enmies, enemy)
+                                plr.xp += 0.5
+                                plr.kill += 1
+                            end
+    
+                            del(bul.bullets, bullet)
+                            hit = true
+                            break -- Stop checking other enemies after a hit
                         end
-                        del(bul.bullets, bullet)
                     end
-                    
+    
+                    -- If no hit, keep bullet alive
+                    if not hit then
+                        -- Optional: Add particle effect for bullet trail
+                        -- pset(bullet.x, bullet.y, 7)
+                    end
                 end
-                    if (bullet.x < 0 or bullet.x > 127 
-                            or bullet.y < 0 or 
-                            bullet.y > 127 or bullet.t <= 0) 
-                            or bullet.t==0 or flag_s then
-                        del(bul.bullets, bullet) -- remove o projetil da lista de balas
-                    end
             end
-            bul.reach=false
+            bul.shootenmy = #bul.bullets > 0 -- Only keep shootenmy true if bullets exist
         end
     end
 end
