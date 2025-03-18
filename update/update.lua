@@ -9,18 +9,12 @@ end
 
 function _dead_update()
     if btn(❎) then
-        _update=_update_on_game
-        _init()
+        dead_state_refresh()
     end
 end
 
 
 function _lvl_update()
-    printh("lvl up",game_state.lvl_up)
-    if btnp(❎) then -- botれこo x (abre/fecha menu)
-        game_state.menu_active = not game_state.menu_active
-        game_state.selected_item = 1
-    end
 
     if game_state.menu_active then
         -- navegaれせれこo no menu
@@ -42,11 +36,9 @@ function _lvl_update()
         if btnp(🅾️) and not game_state.action_triggered then
             local item = game_state.menu_items[game_state.selected_item]
             item.action()
-            print("updated click")
             game_state.action_triggered = true
-            game_state.lvl_up=false
-            _update=_update_on_game
-            _draw=_draw_main_game
+            game_state.menu_active= not game_state.menu_active
+            skill_state_refresh()
         else
             game_state.action_triggered = false
         end

@@ -126,7 +126,8 @@ function init_plr()
     plr.lvl_up = function(self)
         if self.xp > self.lvl * 1 then
             self.lvl+=1
-            game_state.lvl_up=true
+            game_state.menu_active = not game_state.menu_active
+            game_state.selected_item = 1
             _update=_lvl_update
             _draw=_skill_draw
         end

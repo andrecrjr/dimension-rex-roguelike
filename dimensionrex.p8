@@ -11,6 +11,8 @@ __lua__
 #include ../dimensionrex/utils.lua
 #include ../dimensionrex/draw/main.lua
 #include ../dimensionrex/draw/skill.lua
+#include ../dimensionrex/game_states/states.lua
+
 
 __gfx__
 00000000004444000044440000444400004444000044440000444400004444000000000d00000000000000000000000000000000000000000000000000000000
