@@ -68,35 +68,36 @@ function init_phase()
     end
   end
   phase['gen_map'] = function(self)
-    -- define a seed
     if not self.generated then
-      local spwn = false
-      -- inicializa o gerador de números pseudo-aleatórios com a seed
-    for_maptile(function(x, y)
-        local r = rnd(1)
-        local terrain
-        if r < self.probs.liq then
-          terrain = "liq"
-        elseif r < self.probs.liq + self.probs.solid then
-          terrain = "solid"
-        elseif r < self.probs.liq + self.probs.solid + self.probs.sol_two then
-          terrain = "sol_two"
-        else
-          terrain = "normal"
+        for x = 0, 15 do  -- Limit to 16x16 tile map for PICO-8
+            for y = self.map.mnspc, 15 do
+                local r = rnd(1)
+                local terrain
+                if r < self.probs.liq then
+                    terrain = "liq"
+                elseif r < self.probs.liq + self.probs.solid then
+                    terrain = "solid"
+                elseif r < self.probs.liq + self.probs.solid + self.probs.sol_two then
+                    terrain = "sol_two"
+                else
+                    terrain = "normal"
+                end
+                -- Ensure player spawn area is clear
+                local px, py = flr(plr.x / 8), flr(plr.y / 8)
+                if abs(x - px) <= 1 and abs(y - py) <= 1 then
+                    terrain = "normal"
+                end
+                
+                local tile = self.biomes[self.select][terrain][flr(rnd(#self.biomes[self.select][terrain])) + 1]
+                mset(x, y, tile)
+            end
         end
-        if plr.x/8 == x and plr.y/8 == y then
-            terrain="normal"
-        end
-        local tile = self.biomes[self.select][terrain][flr(rnd(#self.tiles[terrain])) + 1]
-        mset(x, y, tile)
-      end
-    , self)
-    self.generated=true
-    self:spwn_enemies()
-    self:pos_gen()
-    self:drop_items()
+        self.generated = true
+        self:spwn_enemies()
+        self:pos_gen()
+        self:drop_items()
     end
-  end
+end
 
   phase['env_effects'] = function(phase)
     if plr:collision(f.liq) then

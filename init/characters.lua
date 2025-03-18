@@ -37,17 +37,29 @@ function init_plr()
         }
     }
 
-    plr.collision=function (plr, flag, coords)
-        ptx1, pty1 = plr.x, plr.y
-        ptx2, pty2 = ptx1 + 7, pty1 + 7
-        if flag == 1 then
-            ptx1, pty1 = plr.x, plr.y
-            ptx2, pty2 = ptx1, pty1
+    plr.collision = function(self, flag, coords)
+        -- Define collision box with slight offset to prevent sticking
+        local offset = 0.5  -- Small offset to prevent edge sticking
+        local ptx1 = self.x + offset
+        local pty1 = self.y + offset
+        local ptx2 = self.x + self.w - offset
+        local pty2 = self.y + self.h - offset
+        
+        -- Adjust for specific flags if needed
+        if flag == f.liq then  -- Liquid-specific collision might need different handling
+            ptx1 = self.x + 2
+            pty1 = self.y + 2
+            ptx2 = self.x + self.w - 2
+            pty2 = self.y + self.h - 2
         end
-        return has_flag(ptx1, pty1, flag, coords) or
-               has_flag(ptx2, pty1, flag, coords) or
-               has_flag(ptx1, pty2, flag, coords) or
-               has_flag(ptx2, pty2, flag, coords)
+        
+        -- Check all four corners
+        local top_left = has_flag(ptx1, pty1, flag, coords)
+        local top_right = has_flag(ptx2, pty1, flag, coords)
+        local bottom_left = has_flag(ptx1, pty2, flag, coords)
+        local bottom_right = has_flag(ptx2, pty2, flag, coords)
+        
+        return top_left or top_right or bottom_left or bottom_right
     end
 
     plr.act=function(plr)
