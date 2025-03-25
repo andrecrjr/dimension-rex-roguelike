@@ -114,8 +114,8 @@ function _skill_init()
                 action = function()
                     game_state.menu_active = false
                     game_state.lvl_up = false
-                    _update = _update_game
-                    _draw = _draw_game
+                    game_state.action_triggered = false
+                    skill_state_refresh()
                 end,
                 description = "return to game"
             }
@@ -166,20 +166,43 @@ function _skill_draw()
 end
 
 function _lvl_update()
-    if btnp(⬆️) then
-        game_state.selected_item = max(1, game_state.selected_item - 1)
-        sfx(6)
-    elseif btnp(⬇️) then
-        game_state.selected_item = min(#game_state.menu_items, game_state.selected_item + 1)
-        sfx(6)
-    elseif btnp(❎) then
-        local item = game_state.menu_items[game_state.selected_item]
-        if item.max_level then
-            if item.level < item.max_level then
+    if game_state.menu_active then
+        -- Navigation
+        if btnp(⬇️) then
+            game_state.selected_item += 1
+            if game_state.selected_item > #game_state.menu_items then
+                game_state.selected_item = 1
+            end
+            sfx(6)
+        end
+        
+        if btnp(⬆️) then
+            game_state.selected_item -= 1
+            if game_state.selected_item < 1 then
+                game_state.selected_item = #game_state.menu_items
+            end
+            sfx(6)
+        end
+
+        -- Activate selected item (button O or X)
+        if (btnp(🅾️) or btnp(❎)) and not game_state.action_triggered then
+            local item = game_state.menu_items[game_state.selected_item]
+            if item.max_level then
+                if item.level < item.max_level then
+                    item.action()
+                end
+            else
                 item.action()
             end
+            game_state.action_triggered = true
+            
+            -- Continue should close the menu, but other actions shouldn't
+            if game_state.selected_item == #game_state.menu_items then
+                game_state.menu_active = false
+                skill_state_refresh()
+            end
         else
-            item.action()
+            game_state.action_triggered = false
         end
     end
 end

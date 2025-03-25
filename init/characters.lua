@@ -216,8 +216,10 @@ function init_plr()
             -- Always award exactly 1 skill point per level
             self.skill_points += 1
             
+            -- Show skill menu
             game_state.menu_active = true
             game_state.selected_item = 1
+            game_state.action_triggered = false -- Reset this to prevent issues
             _update = _lvl_update
             _draw = _skill_draw
             sfx(7) -- Level up sound

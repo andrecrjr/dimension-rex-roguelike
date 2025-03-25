@@ -17,41 +17,9 @@ function _dead_update()
     end
 end
 
-
-function _lvl_update()
-
-    if game_state.menu_active then
-        -- navegaれせれこo no menu
-        if btnp(⬇️) then
-            game_state.selected_item += 1
-            if game_state.selected_item > #game_state.menu_items then
-                game_state.selected_item = 1
-            end
-            sfx(6)
-        end
-        
-        if btnp(⬆️) then
-            game_state.selected_item -= 1
-            if game_state.selected_item < 1 then
-                game_state.selected_item = #game_state.menu_items
-            end
-            sfx(6)
-        end
-
-        -- ativar item selecionado (botao o)
-        if btnp(🅾️) and not game_state.action_triggered then
-            local item = game_state.menu_items[game_state.selected_item]
-            item.action()
-            game_state.action_triggered = true
-            game_state.menu_active= not game_state.menu_active
-            skill_state_refresh()
-        elseif btnp(❎) then
-            -- Close menu when cancel button is pressed
-            game_state.menu_active = false
-            skill_state_refresh()
-        else
-            game_state.action_triggered = false
-        end
-
-    end
+-- The _lvl_update function is now defined in init/skill.lua
+-- This function refreshes the game state after skill menu is closed
+function skill_state_refresh()
+    _update = _update_on_game
+    _draw = _draw_game
 end
