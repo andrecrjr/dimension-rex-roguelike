@@ -134,7 +134,10 @@ function init_inv()
                     for enemy in all(enmies) do
                         if collide(bullet, enemy) then
                             enemy.hurt = true
-                            enemy.hp -= plr.inv.gun.bullet_types[bullet.type].force
+                            -- Apply damage bonus from bullet mastery skill
+                            local damage = plr.inv.gun.bullet_types[bullet.type].force
+                            damage += (plr.inv.gun.damage_bonus or 0)
+                            enemy.hp -= damage * (plr.damage_mult or 1)
 
                             local knockback = 2
                             local new_x = enemy.x + cos(bullet.dir) * knockback
@@ -161,6 +164,171 @@ function init_inv()
             end
             bul.shootenmy = #bul.bullets > 0
         end
+    end
+end
+
+function init_gun()
+    -- Define bullet types with their properties
+    plr.inv.gun.bullet_types = {
+        normal = {spr = 228, spd = 1.2, force = 2},
+        bounce = {spr = 229, spd = 1, force = 1.5, bounces = 2},
+        spiral = {spr = 230, spd = 0.8, force = 2.5},
+        orbit = {spr = 231, spd = 1, force = 2, orbit_radius = 12}
+    }
+    
+    plr.inv.gun.shoot = function(self)
+        if self.count > 0 then
+            -- Calculate spread angles
+            local spread_count = (self.bullet_spread or 0) + 1
+            local spread_angle = 0.2 -- Angle between bullets in radians
+            local start_angle = -(spread_count - 1) * spread_angle / 2
+            
+            -- Create bullets based on spread
+            for i=1,spread_count do
+                local angle = start_angle + (i-1) * spread_angle
+                local dx = plr.dtx * cos(angle) - plr.dty * sin(angle)
+                local dy = plr.dtx * sin(angle) + plr.dty * cos(angle)
+                
+                add(self.bullets, {
+                    x = plr.x + 4,
+                    y = plr.y + 4,
+                    dx = dx,
+                    dy = dy,
+                    type = self.current_type, -- Changed back to type to match the system
+                    spr = self.bullet_types[self.current_type].spr,
+                    spd = self.bullet_types[self.current_type].spd,
+                    force = self.bullet_types[self.current_type].force,
+                    life = 60,
+                    bounces = 0,
+                    max_bounces = self.bullet_types[self.current_type].bounces or 3,
+                    w = 4,
+                    h = 4,
+                    age = 0
+                })
+            end
+            
+            self.count -= 1
+            sfx(2)
+        end
+    end
+    
+    plr.inv.gun.updt = function(self)
+        -- Update gun position relative to player
+        self.x = plr.x + plr.dtx * 8
+        self.y = plr.y + plr.dty * 8
+        
+        -- Update bullets
+        for b in all(self.bullets) do
+            b.age += 1
+            
+            -- Move bullet based on type
+            if b.type == "spiral" then
+                -- Spiral motion
+                local spiral_radius = 4
+                local spiral_speed = b.age/10
+                b.x += b.dx * b.spd + cos(spiral_speed) * spiral_radius
+                b.y += b.dy * b.spd + sin(spiral_speed) * spiral_radius
+            elseif b.type == "orbit" then
+                -- Orbiting bullets
+                local orbit_radius = self.bullet_types.orbit.orbit_radius
+                local orbit_speed = b.age/15
+                b.x = plr.x + 4 + cos(orbit_speed) * orbit_radius
+                b.y = plr.y + 4 + sin(orbit_speed) * orbit_radius
+            else
+                -- Normal and bounce bullets
+                b.x += b.dx * b.spd
+                b.y += b.dy * b.spd
+            end
+            
+            -- Check collision with enemies
+            for enemy in all(enmies) do
+                if collide(b, enemy) then
+                    enemy.hurt = true
+                    -- Apply damage bonus from bullet mastery skill
+                    local damage = b.force
+                    damage += (plr.inv.gun.damage_bonus or 0)
+                    enemy.hp -= damage * (plr.damage_mult or 1)
+                    
+                    -- Apply knockback
+                    local knockback = 2
+                    local new_x = enemy.x + b.dx * knockback
+                    local new_y = enemy.y + b.dy * knockback
+                    
+                    if not has_flag(new_x, new_y, 0, false) then
+                        enemy.x = new_x
+                        enemy.y = new_y
+                    end
+                    
+                    if enemy.hp <= 0 then
+                        del(enmies, enemy)
+                        plr.xp += 0.5
+                        plr.kill += 1
+                    end
+                    
+                    -- Remove bullet unless it's a piercing type
+                    if b.type != "pierce" then
+                        del(self.bullets, b)
+                        goto continue
+                    end
+                end
+            end
+            
+            -- Check collision with walls
+            if b.type == "bounce" and b.bounces < b.max_bounces then
+                if has_flag(b.x, b.y, 0) then
+                    -- Bounce off walls
+                    if has_flag(b.x - b.dx, b.y, 0) then
+                        b.dx *= -1
+                    end
+                    if has_flag(b.x, b.y - b.dy, 0) then
+                        b.dy *= -1
+                    end
+                    b.bounces += 1
+                    sfx(3)
+                end
+            elseif has_flag(b.x, b.y, 0) then
+                -- Non-bouncing bullets are destroyed on wall hit
+                del(self.bullets, b)
+                goto continue
+            end
+            
+            -- Update bullet lifetime
+            b.life -= 1
+            if b.life <= 0 then
+                del(self.bullets, b)
+            end
+            
+            ::continue::
+        end
+        
+        -- Auto reload based on reload speed
+        if self.count < self.max_count and time() % (30 * (self.reload_speed or 1)) == 0 then
+            self.count += 1
+        end
+    end
+    
+    plr.inv.gun.draw = function(self)
+        -- Draw gun
+        spr(self.spr, self.x, self.y, 1, 1, plr.flp)
+        
+        -- Draw bullets with trails
+        for b in all(self.bullets) do
+            -- Add particle trail effect based on bullet type
+            if b.type == "spiral" then
+                for i=1,2 do
+                    pset(b.x-cos(b.age/8)*i, b.y-sin(b.age/8)*i, 12)
+                end
+            elseif b.type == "bounce" then
+                pset(b.x-b.dx*2, b.y-b.dy*2, 9)
+            elseif b.type == "orbit" then
+                pset(b.x-2, b.y-2, 8)
+                pset(b.x+2, b.y+2, 8)
+            end
+            spr(b.spr, b.x, b.y, 1, 1)
+        end
+        
+        -- Draw ammo count
+        print(self.count, plr.x - 8, plr.y - 8, 7)
     end
 end
 

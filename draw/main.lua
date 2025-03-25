@@ -1,4 +1,3 @@
-
 function _draw()
     _draw=_draw_main_game
 end
@@ -11,6 +10,7 @@ function _draw_main_game()
     map()
     plr:draw()
     enmies:draw()
+    
     phase:gen_map()
     if restart==true then
         phase.biomes.chose=false

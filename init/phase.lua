@@ -120,6 +120,36 @@ end
     local portal= {sp=226, spwn=false, count=0, maxspwn=1}
     if not portal.spwn then
       local trx,try=r_pos()
+      
+      -- Scale difficulty with player level
+      local difficulty_factor = min(plr.lvl / 4, 1)  -- Caps at 1 when player is level 4+
+      
+      -- At higher levels, portals are more likely to be guarded by enemies
+      if plr.lvl >= 3 then
+          -- Spawn guardian enemies near portal
+          local guardian_count = flr(1 + plr.lvl/2)
+          for i=1,guardian_count do
+              local offset_x = flr(rnd(3)) - 1  -- -1, 0, or 1
+              local offset_y = flr(rnd(3)) - 1  -- -1, 0, or 1
+              
+              -- Don't place enemy directly on portal
+              if offset_x != 0 or offset_y != 0 then 
+                  local ex, ey = mid(0, trx + offset_x, 15), mid(11, try + offset_y, 15)
+                  
+                  -- Only place if not solid
+                  if not is_solid(ex, ey) then
+                      local g_enmy = init_enmy()
+                      g_enmy.x = ex * 8
+                      g_enmy.y = ey * 8
+                      g_enmy.hp = g_enmy.hp * (1 + difficulty_factor)
+                      g_enmy.damage = g_enmy.damage * (1 + difficulty_factor)
+                      g_enmy.xp_value += plr.lvl  -- More XP for these tough guardians
+                      g_enmy:add_enmy(enmies)
+                  end
+              end
+          end
+      end
+      
       -- Ensure the portal is not placed on a solid tile and is within map bounds
       while is_solid(trx, try) or trx < 0 or trx > 15 or try < 0 or try > 15 do
           trx, try = r_pos()
@@ -176,7 +206,49 @@ end
 
 
   phase['spwn_enemies']=function(self)
-    enmies:draw()
+    -- Scale enemy count and difficulty with player level
+    init_enmies()
+    
+    -- Base enemy count scaling with level
+    local base_count = 8  -- Starting count
+    local level_bonus = flr(plr.lvl * 1.2)  -- Additional enemies per level
+    local enemy_count = base_count + level_bonus
+    
+    -- Cap maximum enemies based on map size to prevent overcrowding
+    enemy_count = min(enemy_count, 25)
+    
+    for i = 1, enemy_count do
+        local enmy = init_enmy()
+        
+        -- Scale enemy stats with player level
+        if plr.lvl > 1 then
+            local level_scaling = 1 + ((plr.lvl - 1) * 0.15)  -- 15% stronger per level
+            enmy.hp = flr(enmy.hp * level_scaling)
+            enmy.damage = flr(enmy.damage * sqrt(level_scaling))  -- Damage scales more slowly
+            
+            -- Increase XP value for tougher enemies
+            if plr.lvl >= 3 then
+                enmy.xp_value += 1
+            end
+            if plr.lvl >= 6 then
+                enmy.xp_value += 1
+            end
+        end
+        
+        enmy:add_enmy(enmies)
+    end
+    
+    -- At higher levels, add a small chance for special stronger enemies
+    if plr.lvl >= 4 and rnd(10) < 3 then  -- 30% chance
+        local elite = init_enmy()
+        local ex, ey = r_pos()
+        elite.x = ex * 8
+        elite.y = ey * 8
+        elite.hp = elite.hp * 3
+        elite.damage = elite.damage * 2
+        elite.xp_value = elite.xp_value * 3
+        elite:add_enmy(enmies)
+    end
   end
   
 end

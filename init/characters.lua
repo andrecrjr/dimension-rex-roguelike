@@ -4,32 +4,40 @@ function init_plr()
         y = 16,
         spr = 1, 
         spd = 1.5,
-        flp=false,
-        health=100,
-        damage=0,
-        plr_dir="left",
-        w=8,
-        h=8,
-        dx=0,
-        dy=1,
-        lvl=1,
-        xp=0,
-        kill=0,
+        base_spd = 1.5,
+        flp = false,
+        health = 100,
+        max_health = 100,
+        damage = 0,
+        damage_mult = 1,
+        plr_dir = "left",
+        w = 8,
+        h = 8,
+        dx = 0,
+        dy = 1,
+        lvl = 1,
+        xp = 0,
+        xp_needed = 5,
+        skill_points = 2,
+        kill = 0,
         in_liq = false,
-        inv={
-            gun={
-                active=true,
-                count=15,
-                spd=1,
-                spr=228,
-                x=0,
-                y=0,
-                w=8,
-                h=8,
-                t=15,
-                shootenmy=false,
-                force=2,
-                bullets={},
+        inv = {
+            gun = {
+                active = true,
+                count = 15,
+                max_count = 15,
+                spd = 1,
+                reload_speed = 1,
+                bullet_spread = 0,
+                spr = 228,
+                x = 0,
+                y = 0,
+                w = 8,
+                h = 8,
+                t = 15,
+                shootenmy = false,
+                force = 2,
+                bullets = {},
                 current_type = "normal",
                 bullet_types = {
                     normal = {spr = 228},
@@ -39,14 +47,15 @@ function init_plr()
                 }
             }
         },
-        skills={},
-        at = 0, -- anim timer (shortened)
-        as = 4, -- anim speed (shortened)
-        af = 1, -- anim frame (shortened)
+        skills = {},
+        at = 0,
+        as = 4,
+        af = 1,
         vx = 0,
         vy = 0
     }
-    -- Store animation frames in a more token-efficient way
+    
+    -- Store animation frames
     plr.anim = {
         {1, 2, 3},  -- down
         {7, 8, 9},  -- up
@@ -164,9 +173,16 @@ function init_plr()
     
     plr.damaged = function(self, dmg)
         if dmg > 0 then
-            self.health -= dmg
-            self.damage = dmg
-            sfx(0)
+            -- Check for dodge chance
+            if self.dodge_chance and rnd(100) < self.dodge_chance then
+                -- Dodged the attack!
+                self.damage = 0
+                sfx(9) -- Different sound for dodge
+            else
+                self.health = max(0, self.health - dmg)
+                self.damage = dmg
+                sfx(0)
+            end
         end
     end
     
@@ -174,15 +190,36 @@ function init_plr()
         if self.damage>0 and time()%2==0 then
             self.damage = 0
         end
+        
+        -- Apply health regeneration if it exists
+        if self.health_regen and self.health < self.max_health then
+            self.health = min(self.max_health, self.health + self.health_regen)
+        end
     end
 
     plr.lvl_up = function(self)
-        if self.xp > self.lvl then
-            self.lvl+=1
-            game_state.menu_active = not game_state.menu_active
+        if self.xp >= self.xp_needed then
+            self.lvl += 1
+            self.xp -= self.xp_needed
+            
+            -- Progressive scaling XP curve that gets steeper as level increases
+            local scaling_factor = 1.3 + (self.lvl * 0.05)
+            self.xp_needed = flr(self.xp_needed * scaling_factor)
+            
+            -- Award more skill points at low levels, fewer at higher levels
+            local new_points = 1
+            if self.lvl <= 3 then
+                new_points = 2 -- More points at early levels
+            elseif self.lvl >= 10 then
+                new_points = flr(rnd(2)) -- At high levels, sometimes only get 0-1 points
+            end
+            
+            self.skill_points += new_points
+            game_state.menu_active = true
             game_state.selected_item = 1
-            _update=_lvl_update
-            _draw=_skill_draw
+            _update = _lvl_update
+            _draw = _skill_draw
+            sfx(7) -- Level up sound
         end
     end
 
@@ -192,23 +229,43 @@ function init_plr()
             _update=_dead_update
         end
     end
+
+    plr.gain_xp = function(self, amount)
+        self.xp += amount
+        self:lvl_up()
+    end
 end
 
 function init_enmy()
     local enx,eny=r_pos()
     local enmy={
-        x = enx*8, 
-        y = eny*8, 
-        speed = 0.6, -- velocidade de movimento
-        spr = 16, -- sprite do inimigo
-        colision=false,
-        damage=flr(rnd(8)+1),
-        dx=1,
-        dy=0,
-        min_dist=mid(25,35,55),
-        reach=false,
-        flp=false,
-        hp=ceil(rnd(plr.lvl * 4)),
+        x = enx*8,
+        y = eny*8,
+        spr = 16,
+        spd = 0.5,
+        hp = 10,
+        damage = 5,
+        xp_value = 3,
+        w = 8,
+        h = 8,
+        flp = false,
+        hurt = false,
+        dead = false,
+        hit = false,
+        
+        damaged = function(self, dmg)
+            if dmg > 0 then
+                self.hp -= dmg * (plr.damage_mult or 1)
+                self.hit = true
+                if self.hp <= 0 and not self.dead then
+                    self.dead = true
+                    plr:gain_xp(self.xp_value)
+                    plr.kill += 1
+                    sfx(1)
+                end
+            end
+        end,
+        
         biome_spr={
             jurassic={
                 up=20,
@@ -235,8 +292,10 @@ function init_enmy()
                 right=36, 
             }
         },
-        w=8,
-        h=8
+        dx=1,
+        dy=0,
+        min_dist=mid(25,35,55),
+        reach=false
     }
 
     enmy.collision = function (enmy)
@@ -289,20 +348,20 @@ function init_enmies()
             local dist, dx, dy = distance(plr, enemy)
             enemy.reach=false
             if dist < enemy.min_dist then
-              enemy.reach=true
-            local angle = atan2(dx, dy)
-            enemy.dx = enemy.x + cos(angle) * enemy.speed
-            enemy.dy = enemy.y + sin(angle) * enemy.speed
-            enemy:collision()
-            if dist <= 7 then
-                enemy.colision = true
-                if time() % 0.50 == 0 then
-                    plr:damaged(enemy.damage)
+                enemy.reach=true
+                local angle = atan2(dx, dy)
+                enemy.dx = enemy.x + cos(angle) * enemy.spd
+                enemy.dy = enemy.y + sin(angle) * enemy.spd
+                enemy:collision()
+                if dist <= 7 then
+                    enemy.colision = true
+                    if time() % 0.50 == 0 then
+                        plr:damaged(enemy.damage)
+                    end
+                else
+                    enemy.colision = false
                 end
-            else
-                enemy.colision = false
             end
-            end
-           end
+        end
     end
 end
