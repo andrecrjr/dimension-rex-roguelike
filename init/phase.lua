@@ -61,8 +61,8 @@ function init_phase()
       }
     }
   phase["biome_rnd"]=function(phase)
-    if not phase.biomes.chose then
-        local biome_options = {"daniland", "cojado", "jurassic", "toad"}
+    local biome_options = {"daniland", "cojado", "jurassic", "toad"}
+    if not phase.biomes.chose or rnd() < 0.1 then  -- 10% chance to change biome
         phase.select = biome_options[flr(rnd(#biome_options)) + 1]
         phase.biomes.chose = true
     end
@@ -120,6 +120,10 @@ end
     local portal= {sp=226, spwn=false, count=0, maxspwn=1}
     if not portal.spwn then
       local trx,try=r_pos()
+      -- Ensure the portal is not placed on a solid tile and is within map bounds
+      while is_solid(trx, try) or trx < 0 or trx > 15 or try < 0 or try > 15 do
+          trx, try = r_pos()
+      end
       mset(mid(0,trx, 15), mid(11, try, 15), portal.sp)
       less_obj_map(portal)
       portal.spwn=true
