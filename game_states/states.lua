@@ -10,4 +10,8 @@ function skill_state_refresh()
     -- no _init to dont restart all game data
     _update=_update_on_game
     _draw=_draw_main_game
+    
+    -- Make sure menu state is cleaned up
+    game_state.menu_active = false
+    game_state.action_triggered = false
 end

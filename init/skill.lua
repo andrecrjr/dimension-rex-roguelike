@@ -120,6 +120,15 @@ function _skill_init()
         action_triggered = false,
         lvl_up = false
     }
+    
+    -- Synchronize skill points with player data
+    if plr and plr.skill_points then
+        game_state.skill_points = plr.skill_points
+    else
+        -- Initialize if not already done
+        plr = plr or {}
+        plr.skill_points = plr.skill_points or 0
+    end
 end
 
 function _skill_draw()

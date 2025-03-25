@@ -11,4 +11,17 @@ function menu_game()
     menuitem(1, "stuck!!", function() 
         
     end)
+    
+    -- Add menu item to open skills page
+    local skill_label = "skills"
+    if plr.skill_points and plr.skill_points > 0 then
+        skill_label = "skills ("..plr.skill_points..")"
+    end
+    
+    menuitem(2, skill_label, function()
+        game_state.menu_active = true
+        game_state.selected_item = 1
+        _update = _lvl_update
+        _draw = _skill_draw
+    end)
 end

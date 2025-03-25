@@ -27,6 +27,7 @@ function _lvl_update()
             if game_state.selected_item > #game_state.menu_items then
                 game_state.selected_item = 1
             end
+            sfx(6)
         end
         
         if btnp(⬆️) then
@@ -34,6 +35,7 @@ function _lvl_update()
             if game_state.selected_item < 1 then
                 game_state.selected_item = #game_state.menu_items
             end
+            sfx(6)
         end
 
         -- ativar item selecionado (botao o)
@@ -42,6 +44,10 @@ function _lvl_update()
             item.action()
             game_state.action_triggered = true
             game_state.menu_active= not game_state.menu_active
+            skill_state_refresh()
+        elseif btnp(❎) then
+            -- Close menu when cancel button is pressed
+            game_state.menu_active = false
             skill_state_refresh()
         else
             game_state.action_triggered = false
