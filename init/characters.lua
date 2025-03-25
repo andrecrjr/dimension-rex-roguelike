@@ -29,7 +29,14 @@ function init_plr()
                 t=15,
                 shootenmy=false,
                 force=2,
-                bullets={}
+                bullets={},
+                current_type = "normal",
+                bullet_types = {
+                    normal = {spr = 228},
+                    bounce = {spr = 229},
+                    spiral = {spr = 230},
+                    orbit = {spr = 231}
+                }
             }
         },
         skills={},
@@ -98,6 +105,22 @@ function init_plr()
         -- Shoot
         if btnp(❎) and self.inv.gun.count > 0 then
             self.inv.gun:shoot()
+        end
+
+        -- Switch bullet type
+        if btnp(🅾️) then
+            local types = {"normal", "bounce", "spiral", "orbit"}
+            local current_idx = 1
+            for i=1,#types do
+                if types[i] == self.inv.gun.current_type then
+                    current_idx = i
+                    break
+                end
+            end
+            current_idx = (current_idx % #types) + 1
+            self.inv.gun.current_type = types[current_idx]
+            -- Update gun sprite based on type
+            self.inv.gun.spr = self.inv.gun.bullet_types[self.inv.gun.current_type].spr
         end
 
         self:clr_damage()
