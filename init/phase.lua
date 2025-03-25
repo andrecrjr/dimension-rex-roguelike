@@ -102,10 +102,11 @@ end
   phase['env_effects'] = function(phase)
     if plr:collision(f.liq) then
       plr.spd = 0.58
-      plr.spr = 8
+      plr.in_liquid = true
       plr.inv.gun.active=false
     else
       plr.spd = 1
+      plr.in_liquid = false
       plr.inv.gun.active=true
     end
     if phase.select == "cojado" then

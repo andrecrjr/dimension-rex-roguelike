@@ -92,3 +92,13 @@ function animation(plr, speed, init_sprite, last_sprite, speed_between)
     local itemx, itemy = r_pos()
     mset(itemx, itemy, item_sp)
 end
+
+function approach(current, target, step)
+    if current < target then
+        return min(current + step, target)
+    elseif current > target then
+        return max(current - step, target)
+    else
+        return current
+    end
+end
