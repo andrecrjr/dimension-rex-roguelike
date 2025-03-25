@@ -69,25 +69,25 @@ function init_phase()
   end
   phase['gen_map'] = function(self)
     if not self.generated then
-        for x = 0, 15 do  -- Limit to 16x16 tile map for PICO-8
+        for x = 0, 15 do
             for y = self.map.mnspc, 15 do
                 local r = rnd(1)
-                local terrain
+                local terrain = "normal"
+
                 if r < self.probs.liq then
                     terrain = "liq"
                 elseif r < self.probs.liq + self.probs.solid then
                     terrain = "solid"
                 elseif r < self.probs.liq + self.probs.solid + self.probs.sol_two then
                     terrain = "sol_two"
-                else
-                    terrain = "normal"
                 end
+
                 -- Ensure player spawn area is clear
                 local px, py = flr(plr.x / 8), flr(plr.y / 8)
                 if abs(x - px) <= 1 and abs(y - py) <= 1 then
                     terrain = "normal"
                 end
-                
+
                 local tile = self.biomes[self.select][terrain][flr(rnd(#self.biomes[self.select][terrain])) + 1]
                 mset(x, y, tile)
             end

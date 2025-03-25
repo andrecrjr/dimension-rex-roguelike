@@ -60,53 +60,43 @@ function init_plr()
     end
     
     plr.updt = function(self)
-        local lx,ly = self.x,self.y
-        local dx,dy,m = 0,0,0.7071
-        
+        local lx, ly = self.x, self.y
+        local dx, dy, m = 0, 0, 0.7071
+
         -- Get input
-        if btn(⬅️) then dx-=1 end
-        if btn(➡️) then dx+=1 end
-        if btn(⬆️) then dy-=1 end
-        if btn(⬇️) then dy+=1 end
-        
+        dx = (btn(⬅️) and -1 or 0) + (btn(➡️) and 1 or 0)
+        dy = (btn(⬆️) and -1 or 0) + (btn(⬇️) and 1 or 0)
+
         -- Normalize diagonal
-        if dx!=0 and dy!=0 then
-            dx*=m
-            dy*=m
+        if dx ~= 0 and dy ~= 0 then
+            dx, dy = dx * m, dy * m
         end
-        
+
         -- Apply acceleration
-        local ac,dc = 0.2,0.3
-        if dx!=0 then self.vx=approach(self.vx,dx*self.spd,ac) else self.vx=approach(self.vx,0,dc) end
-        if dy!=0 then self.vy=approach(self.vy,dy*self.spd,ac) else self.vy=approach(self.vy,0,dc) end
-        
+        local ac, dc = 0.2, 0.3
+        self.vx = approach(self.vx, dx * self.spd, ac)
+        self.vy = approach(self.vy, dy * self.spd, ac)
+
         -- Check if moving
-        local moving = abs(self.vx)>0.1 or abs(self.vy)>0.1
-        
+        local moving = abs(self.vx) > 0.1 or abs(self.vy) > 0.1
+
         -- Update direction
         if moving then
-            if abs(self.vx) > abs(self.vy) then
-                self.flp = self.vx<0
-                plr_dir = self.vx<0 and "left" or "right"
-                self.dtx = self.vx<0 and -1 or 1
-                self.dty = 0
-            else
-                plr_dir = self.vy<0 and "up" or "down"
-                self.dtx = 0
-                self.dty = self.vy<0 and -1 or 1
-                self.flp = false
-            end
+            self.flp = self.vx < 0
+            plr_dir = (abs(self.vx) > abs(self.vy)) and (self.vx < 0 and "left" or "right") or (self.vy < 0 and "up" or "down")
+            self.dtx = (abs(self.vx) > abs(self.vy)) and (self.vx < 0 and -1 or 1) or 0
+            self.dty = (abs(self.vx) > abs(self.vy)) and 0 or (self.vy < 0 and -1 or 1)
         end
-        
+
         -- Apply movement with collision
         self.x += self.vx
-        if self:collision(0) then self.x=lx self.vx=0 end
-        
+        if self:collision(0) then self.x = lx self.vx = 0 end
+
         self.y += self.vy
-        if self:collision(0) then self.y=ly self.vy=0 end
-        
+        if self:collision(0) then self.y = ly self.vy = 0 end
+
         -- Shoot
-        if btnp(❎) and self.inv.gun.count>0 then
+        if btnp(❎) and self.inv.gun.count > 0 then
             self.inv.gun:shoot()
         end
 
@@ -129,14 +119,14 @@ function init_plr()
                 self.af = (self.af % 3) + 1
             end
         else
-            self.at,self.af = 0,1
+            self.at, self.af = 0, 1
         end
         
         -- Set sprite
         if self.in_liq then
             self.spr = 11
         else
-            local idx = plr_dir=="up" and 2 or (plr_dir=="down" and 1 or 3)
+            local idx = (plr_dir == "up" and 2) or (plr_dir == "down" and 1) or 3
             self.spr = self.anim[idx][self.af]
         end
     end

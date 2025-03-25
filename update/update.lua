@@ -1,5 +1,9 @@
 function _update()
-    _update_on_game()
+    if game_state.menu_active then
+        _lvl_update()
+    else
+        _update_on_game()
+    end
 end
 
 function _update_on_game()
