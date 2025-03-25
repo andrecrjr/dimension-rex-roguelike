@@ -4,8 +4,6 @@ function init_plr()
         y = 16,
         spr = 1, 
         spd = 1.5,
-        spr_time=0,
-        h= 100,
         flp=false,
         health=100,
         damage=0,
@@ -17,7 +15,7 @@ function init_plr()
         lvl=1,
         xp=0,
         kill=0,
-        in_liquid = false,
+        in_liq = false,
         inv={
             gun={
                 active=true,
@@ -34,172 +32,112 @@ function init_plr()
                 bullets={}
             }
         },
-        skills={
-        },
-        anim_timer = 0,
-        anim_speed = 4,
-        is_moving = false,
-        anim_frames = {
-            down = {1, 2, 3},
-            up = {7, 8, 9},
-            side = {4, 5, 6}
-        },
-        anim_frame = 1,
-        max_spd = 1.5,
-        accel = 0.2,
-        decel = 0.3,
+        skills={},
+        at = 0, -- anim timer (shortened)
+        as = 4, -- anim speed (shortened)
+        af = 1, -- anim frame (shortened)
         vx = 0,
-        vy = 0,
+        vy = 0
+    }
+    -- Store animation frames in a more token-efficient way
+    plr.anim = {
+        {1, 2, 3},  -- down
+        {7, 8, 9},  -- up
+        {4, 5, 6}   -- side
     }
 
     plr.collision = function(self, flag, coords)
-        -- Define collision box with slight offset to prevent sticking
-        local offset = 0.5  -- Small offset to prevent edge sticking
-        local ptx1 = self.x + offset
-        local pty1 = self.y + offset
-        local ptx2 = self.x + self.w - offset
-        local pty2 = self.y + self.h - offset
+        local o = flag == f.liq and 2 or 0.5 -- offset
+        local x1,y1 = self.x+o, self.y+o
+        local x2,y2 = self.x+self.w-o, self.y+self.h-o
         
-        -- Adjust for specific flags if needed
-        if flag == f.liq then  -- Liquid-specific collision might need different handling
-            ptx1 = self.x + 2
-            pty1 = self.y + 2
-            ptx2 = self.x + self.w - 2
-            pty2 = self.y + self.h - 2
-        end
-        
-        -- Check all four corners
-        local top_left = has_flag(ptx1, pty1, flag, coords)
-        local top_right = has_flag(ptx2, pty1, flag, coords)
-        local bottom_left = has_flag(ptx1, pty2, flag, coords)
-        local bottom_right = has_flag(ptx2, pty2, flag, coords)
-        
-        return top_left or top_right or bottom_left or bottom_right
+        return has_flag(x1,y1,flag,coords) or has_flag(x2,y1,flag,coords) or 
+               has_flag(x1,y2,flag,coords) or has_flag(x2,y2,flag,coords)
     end
 
-    plr.act=function(plr)
-        plr.inv.gun:updt()
+    plr.act=function(self)
+        self.inv.gun:updt()
     end
     
     plr.updt = function(self)
-        local lx = plr.x
-        local ly = plr.y
-        local input_dx, input_dy = 0, 0
+        local lx,ly = self.x,self.y
+        local dx,dy,m = 0,0,0.7071
         
-        -- Get input direction
-        if btn(⬅️) then input_dx -= 1 end
-        if btn(➡️) then input_dx += 1 end
-        if btn(⬆️) then input_dy -= 1 end
-        if btn(⬇️) then input_dy += 1 end
+        -- Get input
+        if btn(⬅️) then dx-=1 end
+        if btn(➡️) then dx+=1 end
+        if btn(⬆️) then dy-=1 end
+        if btn(⬇️) then dy+=1 end
         
-        -- Normalize diagonal input
-        if input_dx != 0 and input_dy != 0 then
-            input_dx *= 0.7071
-            input_dy *= 0.7071
+        -- Normalize diagonal
+        if dx!=0 and dy!=0 then
+            dx*=m
+            dy*=m
         end
         
-        -- Apply acceleration/deceleration
-        if input_dx != 0 then
-            self.vx = approach(self.vx, input_dx * self.max_spd, self.accel)
-        else
-            self.vx = approach(self.vx, 0, self.decel)
-        end
+        -- Apply acceleration
+        local ac,dc = 0.2,0.3
+        if dx!=0 then self.vx=approach(self.vx,dx*self.spd,ac) else self.vx=approach(self.vx,0,dc) end
+        if dy!=0 then self.vy=approach(self.vy,dy*self.spd,ac) else self.vy=approach(self.vy,0,dc) end
         
-        if input_dy != 0 then
-            self.vy = approach(self.vy, input_dy * self.max_spd, self.accel)
-        else
-            self.vy = approach(self.vy, 0, self.decel)
-        end
+        -- Check if moving
+        local moving = abs(self.vx)>0.1 or abs(self.vy)>0.1
         
-        -- Update direction based on movement
-        local moving = abs(self.vx) > 0.1 or abs(self.vy) > 0.1
-        
-        -- Update player direction based on movement
+        -- Update direction
         if moving then
             if abs(self.vx) > abs(self.vy) then
-                -- Horizontal movement dominates
-                if self.vx < 0 then
-                    self.flp = true
-                    plr_dir = "left"
-                    self.dtx = -1
-                    self.dty = 0
-                else
-                    self.flp = false
-                    plr_dir = "right"
-                    self.dtx = 1
-                    self.dty = 0
-                end
+                self.flp = self.vx<0
+                plr_dir = self.vx<0 and "left" or "right"
+                self.dtx = self.vx<0 and -1 or 1
+                self.dty = 0
             else
-                -- Vertical movement dominates
-                if self.vy < 0 then
-                    plr_dir = "up"
-                    self.dtx = 0
-                    self.dty = -1
-                else
-                    plr_dir = "down" 
-                    self.dtx = 0
-                    self.dty = 1
-                end
+                plr_dir = self.vy<0 and "up" or "down"
+                self.dtx = 0
+                self.dty = self.vy<0 and -1 or 1
                 self.flp = false
             end
         end
         
-        -- Apply velocity with collision checks
+        -- Apply movement with collision
         self.x += self.vx
-        if self:collision(0) then
-            self.x = lx
-            self.vx = 0
-        end
+        if self:collision(0) then self.x=lx self.vx=0 end
         
         self.y += self.vy
-        if self:collision(0) then
-            self.y = ly
-            self.vy = 0
-        end
+        if self:collision(0) then self.y=ly self.vy=0 end
         
-        if btnp(❎) then
-            if plr.inv.gun.count>0 then
-                plr.inv.gun:shoot()
-            end
+        -- Shoot
+        if btnp(❎) and self.inv.gun.count>0 then
+            self.inv.gun:shoot()
         end
 
         self:clr_damage()
         phase:env_effects()
         phase:get_itms()
-        
         self:act()
         
+        -- Bounds check
         self.x = mid(phase.map.xmin, self.x, phase.map.xmax)
         self.y = mid(phase.map.ymin, self.y, phase.map.ymax)
         self:lvl_up()
         self:dead()
         
-        -- Animation update based on movement and environment
+        -- Animation
         if moving then
-            self.is_moving = true
-            self.anim_timer += 1
-            if self.anim_timer >= self.anim_speed then
-                self.anim_timer = 0
-                self.anim_frame = (self.anim_frame % 3) + 1
+            self.at += 1
+            if self.at >= self.as then
+                self.at = 0
+                self.af = (self.af % 3) + 1
             end
         else
-            self.is_moving = false
-            self.anim_timer = 0
-            self.anim_frame = 1
+            self.at,self.af = 0,1
         end
         
-        -- Set sprite based on environment first, then direction and animation
-        if self.in_liquid then
-            self.spr = 11  -- Water sprite takes precedence
+        -- Set sprite
+        if self.in_liq then
+            self.spr = 11
         else
-            -- Normal animation based on direction
-            if plr_dir == "up" then
-                self.spr = self.anim_frames.up[self.anim_frame]
-            elseif plr_dir == "down" then
-                self.spr = self.anim_frames.down[self.anim_frame]
-            else -- left or right
-                self.spr = self.anim_frames.side[self.anim_frame]
-            end
+            local idx = plr_dir=="up" and 2 or (plr_dir=="down" and 1 or 3)
+            self.spr = self.anim[idx][self.af]
         end
     end
     
@@ -211,22 +149,22 @@ function init_plr()
         self.inv.gun:draw()
     end
     
-    plr.damaged= function (self, damage)
-        if damage > 0 then
-            self.health = self.health - damage
-            self.damage=damage
+    plr.damaged = function(self, dmg)
+        if dmg > 0 then
+            self.health -= dmg
+            self.damage = dmg
             sfx(0)
         end
     end
     
     plr.clr_damage = function(self)
-        if self.damage>0 and time() % 2 == 0 then
+        if self.damage>0 and time()%2==0 then
             self.damage = 0
         end
     end
 
     plr.lvl_up = function(self)
-        if self.xp > self.lvl * 1 then
+        if self.xp > self.lvl then
             self.lvl+=1
             game_state.menu_active = not game_state.menu_active
             game_state.selected_item = 1
@@ -240,7 +178,6 @@ function init_plr()
             self.health=0
             _update=_dead_update
         end
-        
     end
 end
 
