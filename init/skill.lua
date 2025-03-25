@@ -11,15 +11,15 @@ function _skill_init()
                 max_level = 5,
                 action = function() 
                     if plr.skill_points > 0 then
-                        -- Progressive scaling - more potent at early levels
-                        local level_bonus = 0.15 + (0.05 * (5 - game_state.menu_items[1].level))
+                        -- More consistent scaling, gets slightly better with each level
+                        local level_bonus = 0.12 + (0.03 * game_state.menu_items[1].level)
                         plr.damage_mult = (plr.damage_mult or 1) + level_bonus
                         plr.skill_points -= 1
                         game_state.menu_items[1].level += 1
                         sfx(7) -- Level up sound
                     end
                 end,
-                description = "increase damage by 15-20%"
+                description = "increase damage by 12-27%"
             },
             {
                 text = "vitality",
@@ -27,8 +27,8 @@ function _skill_init()
                 max_level = 5,
                 action = function()
                     if plr.skill_points > 0 then
-                        -- Progressive scaling - more potent at early levels
-                        local health_bonus = 15 + (5 * (5 - game_state.menu_items[2].level))
+                        -- More consistent scaling, gets better with each level
+                        local health_bonus = 10 + (3 * game_state.menu_items[2].level)
                         plr.max_health += health_bonus
                         plr.health += health_bonus
                         plr.skill_points -= 1
@@ -36,7 +36,7 @@ function _skill_init()
                         sfx(7)
                     end
                 end,
-                description = "increase max health by 15-20"
+                description = "increase max health by 10-25"
             },
             {
                 text = "agility",
@@ -44,8 +44,8 @@ function _skill_init()
                 max_level = 5,
                 action = function()
                     if plr.skill_points > 0 then
-                        -- Progressive scaling - more potent at early levels
-                        local speed_bonus = 0.2 + (0.05 * (5 - game_state.menu_items[3].level))
+                        -- More consistent scaling, gets better with each level
+                        local speed_bonus = 0.15 + (0.03 * game_state.menu_items[3].level)
                         plr.spd += speed_bonus
                         plr.skill_points -= 1
                         game_state.menu_items[3].level += 1
@@ -60,9 +60,9 @@ function _skill_init()
                 max_level = 5,
                 action = function()
                     if plr.skill_points > 0 then
-                        -- Better at early levels
-                        local reload_factor = 0.85 - (0.02 * (5 - game_state.menu_items[4].level))
-                        local ammo_bonus = 5 + game_state.menu_items[4].level
+                        -- More consistent scaling - better as you level up
+                        local reload_factor = 0.92 - (0.02 * game_state.menu_items[4].level)
+                        local ammo_bonus = 2 + game_state.menu_items[4].level
                         plr.inv.gun.reload_speed = (plr.inv.gun.reload_speed or 1) * reload_factor
                         plr.inv.gun.count += ammo_bonus
                         plr.inv.gun.max_count += 2
@@ -80,8 +80,9 @@ function _skill_init()
                 action = function()
                     if plr.skill_points > 0 then
                         plr.inv.gun.bullet_spread = (plr.inv.gun.bullet_spread or 0) + 1
-                        -- Add bonus damage too
-                        plr.inv.gun.damage_bonus = (plr.inv.gun.damage_bonus or 0) + 2
+                        -- Add bonus damage that increases with level
+                        local damage_bonus = 1 + game_state.menu_items[5].level
+                        plr.inv.gun.damage_bonus = (plr.inv.gun.damage_bonus or 0) + damage_bonus
                         plr.skill_points -= 1
                         game_state.menu_items[5].level += 1
                         sfx(7)
@@ -95,10 +96,12 @@ function _skill_init()
                 max_level = 3,
                 action = function()
                     if plr.skill_points > 0 then
-                        -- Add a chance to avoid damage completely
-                        plr.dodge_chance = (plr.dodge_chance or 0) + 10
-                        -- Small health regen
-                        plr.health_regen = (plr.health_regen or 0) + 0.05
+                        -- Add dodge chance that gets better with levels
+                        local dodge_bonus = 5 + (2 * game_state.menu_items[6].level)
+                        plr.dodge_chance = (plr.dodge_chance or 0) + dodge_bonus
+                        -- Small health regen that gets better with levels
+                        local regen_bonus = 0.03 + (0.01 * game_state.menu_items[6].level)
+                        plr.health_regen = (plr.health_regen or 0) + regen_bonus
                         plr.skill_points -= 1
                         game_state.menu_items[6].level += 1
                         sfx(7)

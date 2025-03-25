@@ -14,7 +14,7 @@ function _skill_draw()
     
     for i=1,#game_state.menu_items do
         local item = game_state.menu_items[i]
-        local y = 32 + i * 10
+        local y = 24 + i * 10
         local color = 7
         
         if i == game_state.selected_item then
@@ -26,9 +26,9 @@ function _skill_draw()
             print(item.description, 10, 102, 7)
             
             -- Show additional info for skills
-            if item.max_level then
-                print("current level: "..item.level.."/"..item.max_level, 10, 110, 6)
-            end
+            -- if item.max_level then
+            --     print("current level: "..item.level.."/"..item.max_level, 10, 110, 6)
+            -- end
         end
         
         -- Draw skill name

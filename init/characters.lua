@@ -18,7 +18,7 @@ function init_plr()
         lvl = 1,
         xp = 0,
         xp_needed = 5,
-        skill_points = 2,
+        skill_points = 0,
         kill = 0,
         in_liq = false,
         inv = {
@@ -202,19 +202,20 @@ function init_plr()
             self.lvl += 1
             self.xp -= self.xp_needed
             
-            -- Progressive scaling XP curve that gets steeper as level increases
-            local scaling_factor = 1.3 + (self.lvl * 0.05)
+            -- More gradual XP curve that starts easier but grows steeper
+            local scaling_factor
+            if self.lvl <= 3 then
+                scaling_factor = 1.2 -- Easier early levels
+            elseif self.lvl <= 7 then
+                scaling_factor = 1.3 + (self.lvl * 0.03) -- Medium levels
+            else
+                scaling_factor = 1.4 + (self.lvl * 0.07) -- Higher levels get much harder
+            end
             self.xp_needed = flr(self.xp_needed * scaling_factor)
             
-            -- Award more skill points at low levels, fewer at higher levels
-            local new_points = 1
-            if self.lvl <= 3 then
-                new_points = 2 -- More points at early levels
-            elseif self.lvl >= 10 then
-                new_points = flr(rnd(2)) -- At high levels, sometimes only get 0-1 points
-            end
+            -- Always award exactly 1 skill point per level
+            self.skill_points += 1
             
-            self.skill_points += new_points
             game_state.menu_active = true
             game_state.selected_item = 1
             _update = _lvl_update
@@ -245,7 +246,7 @@ function init_enmy()
         spd = 0.5,
         hp = 10,
         damage = 5,
-        xp_value = 3,
+        xp_value = 5,
         w = 8,
         h = 8,
         flp = false,

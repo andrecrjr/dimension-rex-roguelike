@@ -8,9 +8,6 @@ function menu_game()
     -- Show current bullet type
     local type_colors = {normal=7, spread=9, wave=12, homing=8}
     print(plr.inv.gun.current_type, 52, 2.2, type_colors[plr.inv.gun.current_type])
-    menuitem(1, "stuck!!", function() 
-        
-    end)
     
     -- Add menu item to open skills page
     local skill_label = "skills"
