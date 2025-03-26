@@ -200,6 +200,7 @@ end
           plr.inv.gun.count+=4
         end
       elseif item==226 then
+        plr.distance_traveled += 1 -- Increment distance counter when using a portal
         restart=true
     end
   end

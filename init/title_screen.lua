@@ -65,5 +65,12 @@ end
 function start_game()
     -- Call the original init function
     title_active = false
-    _init_game()
+    _init=_init_game()
+    
+    -- Set the proper update and draw functions
+    _update = _update_on_game
+    _draw = _draw_main_game
+    
+    -- Reset any game state variables
+    restart = false
 end 

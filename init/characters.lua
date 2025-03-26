@@ -20,6 +20,7 @@ function init_plr()
         xp_needed = 5,
         skill_points = 0,
         kill = 0,
+        distance_traveled = 0, -- Track how far the player has gone
         in_liq = false,
         inv = {
             gun = {
@@ -228,8 +229,14 @@ function init_plr()
 
     plr.dead = function(self)
         if self.health <= 0 then
-            self.health=0
-            _update=_dead_update
+            self.health = 0
+            
+            -- Play death sound
+            sfx(4)
+            
+            -- Switch to game over mode
+            _update = _dead_update
+            _draw = _draw_game_over
         end
     end
 

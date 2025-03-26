@@ -21,7 +21,12 @@ end
 
 function _dead_update()
     if btn(❎) then
-        dead_state_refresh()
+        -- Reset game state before returning to title
+        title_active = true
+        init_state_game()
+        init_title_screen()
+        _update = update_title_screen
+        _draw = draw_title_screen
     end
 end
 
@@ -32,11 +37,7 @@ function skill_state_refresh()
     _draw = _draw_main_game
 end
 
--- This function refreshes the game state after death screen
-function dead_state_refresh()
+function init_state_game()
     -- Reset the game state
-    _init_game()
-    -- Reset the update and draw functions
-    _update = _update_on_game
-    _draw = _draw_main_game
+    _init=_init_game()
 end
