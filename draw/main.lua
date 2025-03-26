@@ -1,4 +1,10 @@
 function _draw()
+    -- Check if title screen is active
+    if is_title_active() then
+        draw_title_screen()
+        return
+    end
+    
     _draw=_draw_main_game
 end
 

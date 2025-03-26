@@ -1,6 +1,7 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
+#include ../dimensionrex/init/title_screen.lua
 #include ../dimensionrex/init/menu.lua
 #include ../dimensionrex/init/skill.lua
 #include ../dimensionrex/init/characters.lua
@@ -11,7 +12,6 @@ __lua__
 #include ../dimensionrex/utils.lua
 #include ../dimensionrex/draw/main.lua
 #include ../dimensionrex/draw/skill.lua
-#include ../dimensionrex/game_states/states.lua
 
 
 __gfx__

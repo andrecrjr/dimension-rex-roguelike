@@ -1,4 +1,10 @@
+
 function _init()
+    -- Start with the title screen
+    init_title_screen()
+end
+
+function _init_game()
     init_plr()
     init_phase()
     init_enmies()
